@@ -777,12 +777,12 @@ body {
   padding: 0;
 }
 .header__pop-user-set {
-  display: none;
+ display: block;
   position: absolute;
   top: 61px;
   right: 0;
   width: 213px;
-  height: 205px;
+  
   border-radius: 10px;
   border: 0.7px solid rgba(148, 166, 190, 0.4);
   background: #FFF;
@@ -908,6 +908,7 @@ body {
   color: #94A6BE;
   letter-spacing: 0.2px;
 }
+
 
 @media screen and (max-width: 1200px) {
   .main__block {
