@@ -5,16 +5,14 @@
         <div class="pop-exit__ttl">
           <h2>Выйти из аккаунта?</h2>
         </div>
-        <form class="pop-exit__form" id="formExit" action="#">
-          <div class="pop-exit__form-group">
-            <button class="pop-exit__exit-yes _hover01" id="exitYes">
-              <a href="modal/signin.html">Да, выйти</a>
-            </button>
-            <button class="pop-exit__exit-no _hover03" id="exitNo">
-              <a href="main.html">Нет, остаться</a>
-            </button>
-          </div>
-        </form>
+        <div class="pop-exit__form-group">
+          <button class="pop-exit__exit-yes _hover01" @click="confirmExit">
+            Да, выйти
+          </button>
+          <button class="pop-exit__exit-no _hover03" @click="cancelExit">
+            Нет, остаться
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -22,6 +20,15 @@
 
 <script>
 export default {
-  name: 'ExitModal'
+  name: 'ExitModal',
+  methods: {
+    confirmExit() {
+      // Здесь позже добавим логику выхода (очистка данных, редирект)
+      this.$emit('close')
+    },
+    cancelExit() {
+      this.$emit('close')
+    }
+  }
 }
 </script>
