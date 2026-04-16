@@ -6,7 +6,7 @@
           <div v-if="loading" class="loading">
             Данные загружаются...
           </div>
-          <div v-else>
+          <div v-else class="task-desk">
             <slot />
           </div>
         </div>
@@ -33,5 +33,19 @@ onMounted(() => {
   padding: 50px;
   font-size: 18px;
   color: #666;
+}
+
+.task-desk {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 1200px) {
+  .task-desk {
+    flex-direction: row;
+    overflow-x: auto;
+    align-items: flex-start;
+  }
 }
 </style>

@@ -2,89 +2,23 @@
   <div>
     <div class="wrapper">
       <ExitModal v-if="showExitModal" @close="showExitModal = false" />
-
       <NewCardModal />
-
       <TaskModal />
-
       <AppHeader @open-exit-modal="showExitModal = true" />
 
       <TaskDesk>
-        <TaskColumn title="Без статуса">
+        <TaskColumn 
+          v-for="column in columns" 
+          :key="column.status"
+          :title="column.title"
+        >
           <TaskCard
-            categoryName="Web Design"
-            categoryColor="orange"
-            title="Название задачи"
-            date="30.10.23"
-          />
-          <TaskCard
-            categoryName="Research"
-            categoryColor="green"
-            title="Название задачи"
-            date="30.10.23"
-          />
-          <TaskCard
-            categoryName="Web Design"
-            categoryColor="orange"
-            title="Название задачи"
-            date="30.10.23"
-          />
-          <TaskCard
-            categoryName="Copywriting"
-            categoryColor="purple"
-            title="Название задачи"
-            date="30.10.23"
-          />
-          <TaskCard
-            categoryName="Web Design"
-            categoryColor="orange"
-            title="Название задачи"
-            date="30.10.23"
-          />
-        </TaskColumn>
-
-        <TaskColumn title="Нужно сделать">
-          <TaskCard
-            categoryName="Research"
-            categoryColor="green"
-            title="Название задачи"
-            date="30.10.23"
-          />
-        </TaskColumn>
-        <TaskColumn title="В работе">
-          <TaskCard
-            categoryName="Research"
-            categoryColor="green"
-            title="Название задачи"
-            date="30.10.23"
-          />
-          <TaskCard
-            categoryName="Copywriting"
-            categoryColor="purple"
-            title="Название задачи"
-            date="30.10.23"
-          />
-          <TaskCard
-            categoryName="Web Design"
-            categoryColor="orange"
-            title="Название задачи"
-            date="30.10.23"
-          />
-        </TaskColumn>
-        <TaskColumn title="Тестирование">
-          <TaskCard
-            categoryName="Research"
-            categoryColor="green"
-            title="Название задачи"
-            date="30.10.23"
-          />
-        </TaskColumn>
-        <TaskColumn title="Готово">
-          <TaskCard
-            categoryName="Research"
-            categoryColor="green"
-            title="Название задачи"
-            date="30.10.23"
+            v-for="task in getTasksByStatus(column.status)"
+            :key="task.id"
+            :categoryName="task.topic"
+            :categoryColor="getColorByTopic(task.topic)"
+            :title="task.title"
+            :date="task.date"
           />
         </TaskColumn>
       </TaskDesk>
@@ -93,7 +27,7 @@
 </template>
 
 <script>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { tasks } from "../mocks/tasks.js";
 import AppHeader from "../components/AppHeader.vue";
 import TaskCard from "../components/TaskCard.vue";
@@ -117,38 +51,34 @@ export default {
   setup() {
     const showExitModal = ref(false);
 
-    const backlogTasks = computed(() =>
-      tasks.filter((t) => t.status === "Без статуса")
-    );
-    const needToDoTasks = computed(() =>
-      tasks.filter((t) => t.status === "Нужно сделать")
-    );
-    const inProgressTasks = computed(() =>
-      tasks.filter((t) => t.status === "В работе")
-    );
-    const testingTasks = computed(() =>
-      tasks.filter((t) => t.status === "Тестирование")
-    );
-    const doneTasks = computed(() =>
-      tasks.filter((t) => t.status === "Готово")
-    );
+    // Массив колонок (статусов)
+    const columns = [
+      { status: "Без статуса", title: "Без статуса" },
+      { status: "Нужно сделать", title: "Нужно сделать" },
+      { status: "В работе", title: "В работе" },
+      { status: "Тестирование", title: "Тестирование" },
+      { status: "Готово", title: "Готово" }
+    ];
 
+    // Фильтрация задач по статусу
+    const getTasksByStatus = (status) => {
+      return tasks.filter(task => task.status === status);
+    };
+
+    // Цвета для категорий
     const getColorByTopic = (topic) => {
       const colors = {
         "Web Design": "orange",
         Research: "green",
-        Copywriting: "purple",
+        Copywriting: "purple"
       };
       return colors[topic] || "orange";
     };
 
     return {
       showExitModal,
-      backlogTasks,
-      needToDoTasks,
-      inProgressTasks,
-      testingTasks,
-      doneTasks,
+      columns,
+      getTasksByStatus,
       getColorByTopic,
     };
   },
