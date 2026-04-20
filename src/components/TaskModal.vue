@@ -120,7 +120,8 @@
               <button class="btn-browse__edit _btn-bor _hover03"><a href="#">Редактировать задачу</a></button>
               <button class="btn-browse__delete _btn-bor _hover03"><a href="#">Удалить задачу</a></button>
             </div>
-            <button class="btn-browse__close _btn-bg _hover01"><a href="#">Закрыть</a></button>
+            <button class="btn-browse__close _btn-bg _hover01">
+      <a href="#" @click.prevent="closeModal">Закрыть</a></button>
           </div>
           <div class="pop-browse__btn-edit _hide">
             <div class="btn-group">
@@ -128,7 +129,8 @@
               <button class="btn-edit__edit _btn-bor _hover03"><a href="#">Отменить</a></button>
               <button class="btn-edit__delete _btn-bor _hover03" id="btnDelete"><a href="#">Удалить задачу</a></button>
             </div>
-            <button class="btn-edit__close _btn-bg _hover01"><a href="#">Закрыть</a></button>
+            <button class="btn-browse__close _btn-bg _hover01">
+      <a href="#" @click.prevent="closeModal">Закрыть</a></button>
           </div>
         </div>
       </div>
@@ -138,6 +140,498 @@
 
 <script>
 export default {
-  name: 'TaskModal'
+  name: 'TaskModal',
+  methods: {
+    closeModal() {
+      window.location.hash = '';
+      this.$emit('close');
+    }
+  }
 }
 </script>
+
+<style scoped>
+/* ========== БАЗОВЫЕ СТИЛИ (СВЕТЛАЯ ТЕМА) ========== */
+
+.pop-browse {
+  width: 100%;
+  height: 100%;
+  min-width: 375px;
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 7;
+}
+
+.pop-browse__container {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.pop-browse__block {
+  display: block;
+  margin: 0 auto;
+  background-color: #FFFFFF;
+  max-width: 630px;
+  width: 100%;
+  padding: 40px 30px 38px;
+  border-radius: 10px;
+  border: 0.7px solid #D4DBE5;
+  position: relative;
+  box-shadow: 0px 4px 67px -12px rgba(0, 0, 0, 0.13);
+}
+
+.pop-browse__content {
+  display: block;
+  text-align: left;
+}
+
+.pop-browse__content .categories__theme {
+  opacity: 1;
+}
+
+.pop-browse__content .theme-down {
+  display: none;
+  margin-bottom: 20px;
+}
+
+.pop-browse__content .theme-top {
+  display: block;
+}
+
+.pop-browse__top-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.pop-browse__ttl {
+  color: #000;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.pop-browse__wrap {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.pop-browse__form {
+  max-width: 370px;
+  width: 100%;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.pop-browse__btn-browse, .pop-browse__btn-edit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.pop-browse__btn-browse button, .pop-browse__btn-edit button {
+  height: 30px;
+  margin-bottom: 10px;
+  padding: 0 14px;
+  cursor: pointer;
+}
+
+.pop-browse__btn-browse .btn-group button, .pop-browse__btn-edit .btn-group button {
+  margin-right: 8px;
+}
+
+/* Form Browse */
+.form-browse__block {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-browse__area {
+  max-width: 370px;
+  width: 100%;
+  outline: none;
+  padding: 14px;
+  background: #EAEEF6;
+  border: 0.7px solid rgba(148, 166, 190, 0.4);
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: -0.14px;
+  margin-top: 14px;
+  height: 200px;
+  resize: vertical;
+}
+
+.form-browse__area::placeholder {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1px;
+  color: #94A6BE;
+  letter-spacing: -0.14px;
+}
+
+/* Status */
+.status {
+  margin-bottom: 11px;
+}
+
+.status__p {
+  margin-bottom: 14px;
+}
+
+.status__themes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.status__theme {
+  border-radius: 24px;
+  border: 0.7px solid rgba(148, 166, 190, 0.4);
+  color: #94A6BE;
+  padding: 11px 14px 10px;
+  margin-right: 7px;
+  margin-bottom: 7px;
+  cursor: pointer;
+}
+
+.status__theme p {
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: -0.14px;
+}
+
+/* Buttons */
+._btn-bor {
+  border-radius: 4px;
+  border: 0.7px solid #565EEF;
+  outline: none;
+  background: transparent;
+  color: #565EEF;
+}
+
+._btn-bor a {
+  color: #565EEF;
+  text-decoration: none;
+}
+
+._btn-bg {
+  border-radius: 4px;
+  background: #565EEF;
+  border: none;
+  outline: none;
+  color: #FFFFFF;
+}
+
+._btn-bg a {
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+._hide {
+  display: none;
+}
+
+/* Calendar (переиспользуем стили из NewCardModal) */
+.calendar {
+  width: 182px;
+  margin-bottom: 20px;
+}
+
+.calendar__ttl {
+  margin-bottom: 14px;
+  padding: 0 7px;
+}
+
+.calendar__p {
+  color: #94A6BE;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.calendar__p span {
+  color: #000000;
+}
+
+.calendar__block {
+  display: block;
+}
+
+.calendar__month {
+  color: #94A6BE;
+  font-size: 14px;
+  line-height: 25px;
+  font-weight: 600;
+}
+
+.calendar__content {
+  margin-bottom: 12px;
+}
+
+.calendar__days-names {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  margin: 7px 0;
+  padding: 0 7px;
+}
+
+.calendar__day-name {
+  color: #94A6BE;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: -0.2px;
+}
+
+.calendar__cells {
+  width: 182px;
+  height: 126px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.calendar__cell {
+  width: 22px;
+  height: 22px;
+  margin: 2px;
+  border-radius: 50%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  color: #94A6BE;
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: -0.2px;
+  cursor: pointer;
+}
+
+.calendar__nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding: 0 7px;
+}
+
+.calendar__period {
+  padding: 0 7px;
+}
+
+.nav__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav__action {
+  width: 18px;
+  height: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav__action svg {
+  fill: #94A6BE;
+}
+
+._other-month {
+  opacity: 0;
+}
+
+._cell-day:hover {
+  color: #94A6BE;
+  background-color: #EAEEF6;
+}
+
+._active-day {
+  background-color: #94A6BE;
+  color: #FFFFFF;
+}
+
+._current {
+  font-weight: 700;
+}
+
+/* Categories */
+.categories {
+  margin-bottom: 20px;
+}
+
+.categories__themes {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.categories__p {
+  margin-bottom: 14px;
+}
+
+.categories__theme {
+  display: inline-block;
+  width: auto;
+  height: 30px;
+  padding: 8px 20px;
+  border-radius: 24px;
+  margin-right: 7px;
+  opacity: 0.4;
+  cursor: pointer;
+}
+
+.categories__theme p {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 14px;
+  white-space: nowrap;
+}
+
+._active-category {
+  opacity: 1 !important;
+}
+
+._orange {
+  background-color: #FFE4C2;
+  color: #FF6D00;
+}
+
+._green {
+  background-color: #B4FDD1;
+  color: #06B16E;
+}
+
+._purple {
+  background-color: #E9D4FF;
+  color: #9A48F1;
+}
+
+._gray {
+  background: #94A6BE;
+  color: #FFFFFF;
+}
+
+/* Subtitle */
+.subttl {
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Hover effects */
+._hover01:hover {
+  background-color: #33399b;
+}
+
+._hover03:hover {
+  background-color: #33399b;
+  color: #FFFFFF;
+}
+
+._hover03:hover a {
+  color: #FFFFFF;
+}
+
+/* ========== АДАПТИВНЫЕ СТИЛИ ========== */
+
+@media screen and (max-width: 660px) {
+  .pop-browse {
+    top: 70px;
+  }
+  
+  .pop-browse__container {
+    padding: 0;
+    justify-content: flex-start;
+  }
+  
+  .pop-browse__block {
+    border-radius: 0;
+  }
+  
+  .pop-browse__wrap {
+    display: block;
+  }
+  
+  .calendar {
+    max-width: 340px;
+    width: 100%;
+  }
+  
+  .calendar__cells {
+    width: 344px;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  
+  .calendar__cell {
+    width: 42px;
+    height: 42px;
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 495px) {
+  .pop-browse__block {
+    padding: 20px 16px 32px;
+  }
+  
+  .pop-browse__content .theme-down {
+    display: block;
+    margin-bottom: 20px;
+  }
+  
+  .pop-browse__content .theme-top {
+    display: none;
+  }
+  
+  .pop-browse__form {
+    max-width: 100%;
+  }
+  
+  .pop-browse__calendar {
+    width: 100%;
+  }
+  
+  .pop-browse__btn-browse button, 
+  .pop-browse__btn-edit button {
+    width: 100%;
+    height: 40px;
+  }
+  
+  .pop-browse__btn-browse .btn-group, 
+  .pop-browse__btn-edit .btn-group {
+    width: 100%;
+  }
+  
+  .pop-browse__btn-browse .btn-group button, 
+  .pop-browse__btn-edit .btn-group button {
+    margin-right: 0px;
+  }
+  
+  .form-browse__area {
+    max-width: 100%;
+    height: 37px;
+  }
+}
+</style>

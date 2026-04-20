@@ -1,38 +1,36 @@
 <template>
   <div class="cards__item">
-    <div class="cards__card card">
-      <div class="card__group">
-        <div class="card__theme" :class="`_${categoryColor}`">
-          <p :class="`_${categoryColor}`">{{ categoryName }}</p>
-        </div>
-        <a href="#popBrowse" target="_self">
+    <a href="#popBrowse" class="cards__card-link" @click.prevent="openTaskModal">
+      <div class="cards__card card">
+        <div class="card__group">
+          <div class="card__theme" :class="`_${categoryColor}`">
+            <p :class="`_${categoryColor}`">{{ categoryName }}</p>
+          </div>
           <div class="card__btn">
             <div></div>
             <div></div>
             <div></div>
           </div>
-        </a>
-      </div>
-      <div class="card__content">
-        <a href="" target="_blank">
+        </div>
+        <div class="card__content">
           <h3 class="card__title">{{ title }}</h3>
-        </a>
-        <div class="card__date">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none">
-            <g clip-path="url(#clip0_1_415)">
-              <path d="M10.5625 2.03125H2.4375C1.7644 2.03125 1.21875 2.5769 1.21875 3.25V10.5625C1.21875 11.2356 1.7644 11.7812 2.4375 11.7812H10.5625C11.2356 11.7812 11.7812 11.2356 11.7812 10.5625V3.25C11.7812 2.5769 11.2356 2.03125 10.5625 2.03125Z" stroke="#94A6BE" stroke-width="0.8" stroke-linejoin="round" />
-              <path d="M11.7812 4.0625H1.21875M3.25 1.21875V2.03125V1.21875ZM9.75 1.21875V2.03125V1.21875Z" stroke="#94A6BE" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" />
-            </g>
-            <defs>
-              <clipPath id="clip0_1_415">
-                <rect width="13" height="13" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-          <p>{{ date }}</p>
+          <div class="card__date">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none">
+              <g clip-path="url(#clip0_1_415)">
+                <path d="M10.5625 2.03125H2.4375C1.7644 2.03125 1.21875 2.5769 1.21875 3.25V10.5625C1.21875 11.2356 1.7644 11.7812 2.4375 11.7812H10.5625C11.2356 11.7812 11.7812 11.2356 11.7812 10.5625V3.25C11.7812 2.5769 11.2356 2.03125 10.5625 2.03125Z" stroke="#94A6BE" stroke-width="0.8" stroke-linejoin="round" />
+                <path d="M11.7812 4.0625H1.21875M3.25 1.21875V2.03125V1.21875ZM9.75 1.21875V2.03125V1.21875Z" stroke="#94A6BE" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" />
+              </g>
+              <defs>
+                <clipPath id="clip0_1_415">
+                  <rect width="13" height="13" fill="white" />
+                </clipPath>
+              </defs>
+            </svg>
+            <p>{{ date }}</p>
+          </div>
         </div>
       </div>
-    </div>
+    </a>
   </div>
 </template>
 
@@ -56,6 +54,153 @@ export default {
       type: String,
       default: '30.10.23'
     }
+  },
+  methods: {
+    openTaskModal() {
+      window.location.hash = 'popBrowse'
+      this.$emit('open-task-modal')
+    }
   }
 }
 </script>
+
+<style scoped>
+/* ========== БАЗОВЫЕ СТИЛИ (СВЕТЛАЯ ТЕМА) ========== */
+
+.cards__item {
+  padding: 5px;
+  animation-name: card-animation;
+  animation-duration: 500ms;
+  animation-timing-function: linear;
+}
+
+.cards__card-link {
+  text-decoration: none;
+  display: block;
+}
+
+.cards__card {
+  width: 220px;
+  height: 130px;
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: stretch;
+  padding: 15px 13px 19px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cards__card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card__group {
+  width: 100%;
+  height: 20px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card__theme {
+  width: auto;
+  height: 20px;
+  padding: 5px 14px;
+  border-radius: 18px;
+}
+
+.card__theme p {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 10px;
+}
+
+.card__btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 2px;
+  cursor: pointer;
+}
+
+.card__btn div {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #94A6BE;
+}
+
+.card__title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18px;
+  color: #000000;
+  margin-bottom: 10px;
+}
+
+.card__content {
+  height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.card__date {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.card__date svg {
+  width: 13px;
+}
+
+.card__date p {
+  margin-left: 6px;
+  font-size: 10px;
+  line-height: 13px;
+  color: #94A6BE;
+  letter-spacing: 0.2px;
+}
+
+/* Category colors */
+._orange {
+  background-color: #FFE4C2;
+  color: #FF6D00;
+}
+
+._green {
+  background-color: #B4FDD1;
+  color: #06B16E;
+}
+
+._purple {
+  background-color: #E9D4FF;
+  color: #9A48F1;
+}
+
+._gray {
+  background: #94A6BE;
+  color: #FFFFFF;
+}
+
+/* Animation */
+@keyframes card-animation {
+  0% {
+    height: 0;
+    opacity: 0;
+  }
+  100% {
+    height: auto;
+    opacity: 1;
+  }
+}
+</style>

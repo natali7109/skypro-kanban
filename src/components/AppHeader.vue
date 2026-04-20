@@ -1,5 +1,5 @@
 <template>
-  <header class="header" style="position: relative;">
+  <header class="header">
     <div class="container">
       <div class="header__block">
         <div class="header__logo _show _light">
@@ -9,30 +9,30 @@
           <a href=""><img src="/assets/images/logo_dark.png" alt="logo" /></a>
         </div>
 
-
         <nav class="header__nav">
-          <button class="header__btn-main-new _hover01">
-            <a href="#popNewCard">Создать новую задачу</a>
-          </button>
+          <a href="#popNewCard" class="header__btn-main-new _hover01">
+            Создать новую задачу
+          </a>
 
           <a href="#" class="header__user _hover02" @click.prevent="toggleUserMenu">
             Ivan Ivanov
           </a>
 
-     <div class="header__pop-user-set pop-user-set" v-show="showUserMenu">
-  <p class="pop-user-set__name">Ivan Ivanov</p>
-  <p class="pop-user-set__mail">ivan.ivanov@gmail.com</p>
+          <div class="header__pop-user-set pop-user-set" v-show="showUserMenu">
+            <p class="pop-user-set__name">Ivan Ivanov</p>
+            <p class="pop-user-set__mail">ivan.ivanov@gmail.com</p>
 
-  <div class="pop-user-set__theme">
-  <p>Темная тема</p>
-  <label class="switch">
-    <input type="checkbox" @click="toggleTheme" />
-    <span class="slider"></span>
-  </label>
-</div>
-  <button type="button" class="_hover03" @click="handleExit">Выйти</button>
-</div>
-
+            <div class="pop-user-set__theme">
+              <p>Темная тема</p>
+              <!-- ВОЗВРАЩАЕМ ПОЛЗУНОК (switch) -->
+              <label class="switch">
+                <input type="checkbox" @change="toggleTheme" :checked="isDarkTheme" />
+                <span class="slider round"></span>
+              </label>
+            </div>
+            
+            <button type="button" class="_hover03" @click="handleExit">Выйти</button>
+          </div>
         </nav>
       </div>
     </div>
@@ -64,14 +64,16 @@ export default {
       this.isDarkTheme = isChecked
       
       if (isChecked) {
-        this.loadDarkTheme()
+        this.enableDarkTheme()
       } else {
-        this.unloadDarkTheme()
+        this.disableDarkTheme()
       }
       
+      // Сохраняем настройку в localStorage
       localStorage.setItem('darkTheme', this.isDarkTheme)
     },
-    loadDarkTheme() {
+    enableDarkTheme() {
+      // Загружаем CSS файл темной темы
       if (!document.getElementById('dark-theme-styles')) {
         const link = document.createElement('link')
         link.id = 'dark-theme-styles'
@@ -80,35 +82,243 @@ export default {
         document.head.appendChild(link)
       }
     },
-    unloadDarkTheme() {
+    disableDarkTheme() {
+      // Удаляем CSS файл темной темы
       const link = document.getElementById('dark-theme-styles')
       if (link) {
         link.remove()
       }
+    },
+    loadThemePreference() {
+      const savedTheme = localStorage.getItem('darkTheme')
+      if (savedTheme === 'true') {
+        this.isDarkTheme = true
+        this.enableDarkTheme()
+        // Устанавливаем чекбокс в нужное положение
+        this.$nextTick(() => {
+          const checkbox = this.$el.querySelector('.switch input')
+          if (checkbox) {
+            checkbox.checked = true
+          }
+        })
+      }
     }
   },
   mounted() {
-    const savedTheme = localStorage.getItem('darkTheme')
-    if (savedTheme === 'true') {
-      this.isDarkTheme = true
-      this.loadDarkTheme()
-      const checkbox = this.$el.querySelector('.switch input')
-      if (checkbox) checkbox.checked = true
-    }
+    this.loadThemePreference()
+    
+    // Закрываем меню при клике вне его
+    document.addEventListener('click', (e) => {
+      const userElement = this.$el.querySelector('.header__user')
+      const popupElement = this.$el.querySelector('.header__pop-user-set')
+      
+      if (userElement && popupElement && 
+          !userElement.contains(e.target) && 
+          !popupElement.contains(e.target)) {
+        this.showUserMenu = false
+      }
+    })
   }
 }
 </script>
 
 <style scoped>
+/* ========== БАЗОВЫЕ СТИЛИ (СВЕТЛАЯ ТЕМА) ========== */
+
+.header {
+  width: 100%;
+  margin: 0 auto;
+  background-color: #FFFFFF;
+}
+
+.header__block {
+  height: 70px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  top: 0;
+  left: 0;
+  padding: 0 10px;
+}
+
+.header__logo img {
+  width: 85px;
+}
+
+.header__nav {
+  max-width: 290px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.header__btn-main-new {
+  width: 178px;
+  height: 30px;
+  border-radius: 4px;
+  background-color: #565EEF;
+  color: #FFFFFF;
+  border: none;
+  font-size: 14px;
+  line-height: 30px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+}
+
+.header__btn-main-new a {
+  color: #FFFFFF;
+  text-decoration: none;
+  display: block;
+}
+
+.header__user {
+  height: 20px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 20px;
+  color: #565EEF;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.header__user::after {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  border-left: 1.9px solid #565EEF;
+  border-bottom: 1.9px solid #565EEF;
+  transform: rotate(-45deg);
+  margin: -6px 0 0 5px;
+  padding: 0;
+}
+
+/* Popup user menu */
 .header__pop-user-set {
-display: block;
+  display: block;
   position: absolute;
   top: 61px;
   right: 0;
   width: 250px;
+  border-radius: 10px;
+  border: 0.7px solid rgba(148, 166, 190, 0.4);
+  background: #FFF;
+  box-shadow: 0px 10px 39px 0px rgba(26, 56, 101, 0.21);
   padding: 20px;
   text-align: center;
-  z-index: 9999;
+  z-index: 1000;
+}
+
+.pop-user-set__name {
+  color: #000;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 21px;
+  margin-bottom: 4px;
+}
+
+.pop-user-set__mail {
+  color: #94A6BE;
+  font-size: 14px;
+  line-height: 21px;
+  margin-bottom: 15px;
+}
+
+.pop-user-set__theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.pop-user-set__theme p {
+  color: #000;
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.pop-user-set button {
+  width: 72px;
+  height: 30px;
+  background: transparent;
+  color: #565EEF;
+  border-radius: 4px;
+  border: 1px solid #565EEF;
+  cursor: pointer;
+}
+
+/* ========== СТИЛИ ДЛЯ ПОЛЗУНКА (SWITCH) ========== */
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #565EEF;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Hover effects */
+._hover01:hover {
+  background-color: #33399b;
+}
+
+._hover02:hover {
+  color: #33399b;
+}
+
+._hover02:hover::after {
+  border-left-color: #33399b;
+  border-bottom-color: #33399b;
+}
+
+._hover03:hover {
+  background-color: #33399b;
+  color: #FFFFFF;
 }
 </style>
-

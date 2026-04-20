@@ -2,16 +2,18 @@
   <div>
     <div class="wrapper">
       <ExitModal v-if="showExitModal" @close="showExitModal = false" />
-      <NewCardModal />
-      <TaskModal />
-      <AppHeader @open-exit-modal="showExitModal = true" />
+      <NewCardModal @close="showNewCardModal = false" />
+      <TaskModal @close="showTaskModal = false" />
+      <AppHeader 
+        @open-exit-modal="showExitModal = true" 
+        @open-new-card-modal="showNewCardModal = true"/>
 
       <TaskDesk>
         <TaskColumn 
           v-for="column in columns" 
           :key="column.status"
           :title="column.title"
-        >
+          >
           <!-- Проверка: есть ли задачи -->
           <div v-if="getTasksByStatus(column.status).length === 0" class="empty-message">
             Задач нет
@@ -91,6 +93,25 @@ export default {
 </script>
 
 <style scoped>
+/* ========== БАЗОВЫЕ СТИЛИ (СВЕТЛАЯ ТЕМА) ========== */
+
+.wrapper {
+  max-width: 100%;
+  width: 100vw;
+  min-height: 100vh;
+  overflow: hidden;
+  background-color: #F1F1F1;
+}
+
+/* Container styles */
+.container {
+  max-width: 1260px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
+/* Empty message */
 .empty-message {
   padding: 20px;
   text-align: center;
@@ -98,12 +119,19 @@ export default {
   font-size: 14px;
   background: #f5f5f5;
   border-radius: 8px;
-  /* 👇 ВАЖНО: такие же отступы, как у карточки */
   margin-bottom: 12px;
-  /* 👇 Фиксированная минимальная высота, как у карточки */
   min-height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ========== АДАПТИВНЫЕ СТИЛИ ========== */
+
+@media screen and (max-width: 495px) {
+  .container {
+    width: 100%;
+    padding: 0 16px;
+  }
 }
 </style>
