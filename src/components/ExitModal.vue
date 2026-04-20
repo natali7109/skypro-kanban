@@ -1,5 +1,5 @@
 <template>
-  <div class="pop-exit" id="popExit">
+  <div class="pop-exit" @click.self="cancelExit">
     <div class="pop-exit__container">
       <div class="pop-exit__block">
         <div class="pop-exit__ttl">
@@ -23,11 +23,10 @@ export default {
   name: 'ExitModal',
   methods: {
     confirmExit() {
-      window.location.hash = ''; 
+      this.$emit('confirm')
       this.$emit('close')
     },
     cancelExit() {
-      window.location.hash = '';  
       this.$emit('close')
     }
   }
@@ -35,8 +34,6 @@ export default {
 </script>
 
 <style scoped>
-/* ========== БАЗОВЫЕ СТИЛИ (СВЕТЛАЯ ТЕМА) ========== */
-
 .pop-exit {
   width: 100%;
   height: 100%;
@@ -101,16 +98,6 @@ export default {
   cursor: pointer;
 }
 
-.pop-exit__exit-yes a {
-  width: 100%;
-  height: 100%;
-  color: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-}
-
 .pop-exit__exit-no {
   width: 153px;
   height: 30px;
@@ -125,18 +112,8 @@ export default {
   line-height: 21px;
   font-weight: 500;
   letter-spacing: -0.14px;
-  color: #FFFFFF;
-  cursor: pointer;
-}
-
-.pop-exit__exit-no a {
-  width: 100%;
-  height: 100%;
   color: #565EEF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
+  cursor: pointer;
 }
 
 .pop-exit__form-group {
@@ -146,7 +123,6 @@ export default {
   justify-content: space-between;
 }
 
-/* Hover effects */
 ._hover01:hover {
   background-color: #33399b;
 }
@@ -155,12 +131,6 @@ export default {
   background-color: #33399b;
   color: #FFFFFF;
 }
-
-._hover03:hover a {
-  color: #FFFFFF;
-}
-
-/* ========== АДАПТИВНЫЕ СТИЛИ ========== */
 
 @media only screen and (max-width: 375px) {
   .pop-exit__block {

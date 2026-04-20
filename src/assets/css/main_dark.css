@@ -1,41 +1,44 @@
+:root {
+  /* Цвета категорий (инвертированные) */
+  --color-orange-bg: #FF6D00;
+  --color-orange-text: #FFE4C2;
+  --color-green-bg: #06B16E;
+  --color-green-text: #B4FDD1;
+  --color-purple-bg: #9A48F1;
+  --color-purple-text: #E9D4FF;
+  
+  /* Цвета из макета (тёмная тема) */
+  --color-border-light: #4E5566;
+  --color-border-dark: #D4DBE5;
+  --color-accent-green-light: #99D100;
+  --color-accent-green: #BCEC30;
+  --color-accent-blue: #00C1FF;
+  --color-black: #FFFFFF;
+  --color-placeholder: #94A6BE;
+  --color-white: #20202C;
+  
+  /* Основные цвета приложения */
+  --color-bg-light: #151419;
+}
+
 body {
-  color: #FFFFFF;
+  color: var(--color-black);
 }
 
 /* Глобальные утилитарные классы для темной темы */
 ._orange {
-  background-color: #FF6D00;
-  color: #FFE4C2;
+  background-color: var(--color-orange-bg);
+  color: var(--color-orange-text);
 }
 
 ._green {
-  background-color: #06B16E;
-  color: #B4FDD1;
+  background-color: var(--color-green-bg);
+  color: var(--color-green-text);
 }
 
 ._purple {
-  background-color: #9A48F1;
-  color: #E9D4FF;
-}
-
-._gray {
-  background: #94A6BE;
-  color: #FFFFFF;
-}
-
-/* Стили для переключения темы */
-._dark {
-  display: block;
-}
-
-._light {
-  display: none;
-}
-
-.pop-new-card:target,
-.pop-browse:target,
-.pop-exit:target {
-  display: block;
+  background-color: var(--color-purple-bg);
+  color: var(--color-purple-text);
 }
 
 /* Стили для переключения темы */
@@ -53,112 +56,110 @@ body {
 }
 
 .pop-user-set__theme p {
-  color: #FFFFFF;
+  color: var(--color-black);
 }
-
-/* main_dark.css - переопределение стилей для темной темы */
 
 /* AppHeader */
 .header {
-  background-color: #20202C !important;
+  background-color: var(--color-white) !important;
 }
 
 .header__user {
-  color: #FFFFFF !important;
+  color: var(--color-black) !important;
 }
 
 .header__user::after {
-  border-left-color: #FFFFFF !important;
-  border-bottom-color: #FFFFFF !important;
+  border-left-color: var(--color-black) !important;
+  border-bottom-color: var(--color-black) !important;
 }
 
 .header__pop-user-set {
   background: #202229 !important;
-  border-color: #4E5566 !important;
+  border-color: var(--color-border-light) !important;
 }
 
 .pop-user-set__name {
-  color: #FFFFFF !important;
+  color: var(--color-black) !important;
 }
 
 .pop-user-set__theme p {
-  color: #FFFFFF !important;
+  color: var(--color-black) !important;
 }
 
 .pop-user-set button {
-  color: #FFFFFF !important;
-  border-color: #FFFFFF !important;
+  color: var(--color-black) !important;
+  border-color: var(--color-black) !important;
 }
 
 /* HomeView */
 .wrapper {
-  background-color: #151419 !important;
+  background-color: var(--color-bg-light) !important;
 }
 
 /* TaskDesk */
 .main {
-  background-color: #151419 !important;
+  background-color: var(--color-bg-light) !important;
 }
 
 /* TaskCard */
 .cards__card {
-  background-color: #20202C !important;
+  background-color: var(--color-white) !important;
 }
 
 .card__title {
-  color: #FFFFFF !important;
+  color: var(--color-black) !important;
 }
 
 /* NewCardModal */
 .pop-new-card__block {
-  background-color: #20202C !important;
-  border: 2px solid #565EEF !important;
+  background-color: var(--color-white) !important;
+  border: 2px solid var(--color-primary) !important;
   box-shadow: 0 0 20px rgba(86, 94, 239, 0.5) !important;
 }
 
 .pop-new-card__ttl {
-  color: #FFFFFF !important;
+  color: var(--color-black) !important;
 }
 
 .subttl {
-  color: #FFFFFF !important;
+  color: var(--color-black) !important;
 }
 
 .form-new__input,
 .form-new__area {
-  background: #151419 !important;
-  color: #FFFFFF !important;
+  background: var(--color-bg-light) !important;
+  color: var(--color-black) !important;
 }
 
 .calendar__p span {
-  color: #FFFFFF !important;
+  color: var(--color-black) !important;
 }
 
 /* TaskModal */
 .pop-browse__block {
-  background-color: #20202C !important;
-  border: 2px solid #565EEF !important;
+  background-color: var(--color-white) !important;
+  border: 2px solid var(--color-primary) !important;
   box-shadow: 0 0 20px rgba(86, 94, 239, 0.5) !important;
 }
 
 .pop-browse__ttl {
-  color: #FFFFFF !important;
+  color: var(--color-black) !important;
 }
 
 .form-browse__area {
-  background: #151419 !important;
-  color: #FFFFFF !important;
+  background: var(--color-bg-light) !important;
+  color: var(--color-black) !important;
 }
 
 /* ExitModal */
 .pop-exit__block {
-  background-color: #20202C !important;
-  border: 2px solid #565EEF !important;
+  background-color: var(--color-white) !important;
+  border: 2px solid var(--color-primary) !important;
   box-shadow: 0 0 20px rgba(86, 94, 239, 0.5) !important;
 }
 
 .pop-exit__ttl h2 {
-  color: #FFFFFF !important;
+  color: var(--color-black) !important;
 }
 
 /* Эффект при наведении на модальное окно */
@@ -170,28 +171,10 @@ body {
   transition: all 0.3s ease !important;
 }
 
-/* Категории в темной теме */
-._orange {
-  background-color: #FF6D00 !important;
-  color: #FFE4C2 !important;
-}
-
-._green {
-  background-color: #06B16E !important;
-  color: #B4FDD1 !important;
-}
-
-._purple {
-  background-color: #9A48F1 !important;
-  color: #E9D4FF !important;
-}
-
 /* Убираем серую рамку, оставляем только подсветку */
 .pop-new-card__block,
 .pop-browse__block,
 .pop-exit__block {
-  border: 1px solid #565EEF !important;
+  border: 1px solid var(--color-primary) !important;
   box-shadow: 0 0 10px rgba(86, 94, 239, 0.3) !important;
 }
-
-

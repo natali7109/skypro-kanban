@@ -1,20 +1,21 @@
 <template>
   <div>
     <div class="wrapper">
-      <ExitModal v-if="showExitModal" @close="showExitModal = false" />
-      <NewCardModal @close="showNewCardModal = false" />
-      <TaskModal @close="showTaskModal = false" />
+      <ExitModal v-if="showExitModal" @close="showExitModal = false" @confirm="handleLogout" />
+      <NewCardModal v-if="showNewCardModal" @close="showNewCardModal = false" @create="handleCreateTask" />
+      <TaskModal v-if="showTaskModal" @close="showTaskModal = false" />
+      
       <AppHeader 
         @open-exit-modal="showExitModal = true" 
-        @open-new-card-modal="showNewCardModal = true"/>
+        @open-new-card-modal="showNewCardModal = true"
+      />
 
       <TaskDesk>
         <TaskColumn 
           v-for="column in columns" 
           :key="column.status"
           :title="column.title"
-          >
-          <!-- Проверка: есть ли задачи -->
+        >
           <div v-if="getTasksByStatus(column.status).length === 0" class="empty-message">
             Задач нет
           </div>
@@ -26,6 +27,7 @@
             :categoryColor="getColorByTopic(task.topic)"
             :title="task.title"
             :date="task.date"
+            @open-task-modal="openTaskModal(task)"
           />
         </TaskColumn>
       </TaskDesk>
@@ -57,8 +59,10 @@ export default {
   },
   setup() {
     const showExitModal = ref(false);
+    const showNewCardModal = ref(false);
+    const showTaskModal = ref(false);
+    const selectedTask = ref(null);
 
-    // Массив колонок (статусов)
     const columns = [
       { status: "Без статуса", title: "Без статуса" },
       { status: "Нужно сделать", title: "Нужно сделать" },
@@ -67,12 +71,10 @@ export default {
       { status: "Готово", title: "Готово" }
     ];
 
-    // Фильтрация задач по статусу
     const getTasksByStatus = (status) => {
       return tasks.filter(task => task.status === status);
     };
 
-    // Цвета для категорий
     const getColorByTopic = (topic) => {
       const colors = {
         "Web Design": "orange",
@@ -82,19 +84,37 @@ export default {
       return colors[topic] || "orange";
     };
 
+    const openTaskModal = (task) => {
+      selectedTask.value = task;
+      showTaskModal.value = true;
+    };
+
+    const handleCreateTask = (newTask) => {
+      console.log('Создать задачу:', newTask);
+      // TODO: добавить задачу в tasks
+    };
+
+    const handleLogout = () => {
+      console.log('Выход из аккаунта');
+      // TODO: реальный выход
+    };
+
     return {
       showExitModal,
+      showNewCardModal,
+      showTaskModal,
       columns,
       getTasksByStatus,
       getColorByTopic,
+      openTaskModal,
+      handleCreateTask,
+      handleLogout,
     };
   },
 };
 </script>
 
 <style scoped>
-/* ========== БАЗОВЫЕ СТИЛИ (СВЕТЛАЯ ТЕМА) ========== */
-
 .wrapper {
   max-width: 100%;
   width: 100vw;
@@ -103,15 +123,6 @@ export default {
   background-color: #F1F1F1;
 }
 
-/* Container styles */
-.container {
-  max-width: 1260px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 30px;
-}
-
-/* Empty message */
 .empty-message {
   padding: 20px;
   text-align: center;
@@ -125,8 +136,6 @@ export default {
   align-items: center;
   justify-content: center;
 }
-
-/* ========== АДАПТИВНЫЕ СТИЛИ ========== */
 
 @media screen and (max-width: 495px) {
   .container {

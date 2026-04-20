@@ -4,30 +4,14 @@
       <div class="main__block">
         <div class="main__content">
           <!-- СКЕЛЕТОН -->
-        <div v-if="loading" class="skeleton-wrapper">
+          <div v-if="loading" class="skeleton-wrapper">
             <div class="skeleton-columns">
               <div v-for="i in 5" :key="i" class="skeleton-column">
-                <div class="column__title">
-                  <div class="skeleton-title"></div>
-                </div>
-                <div class="cards">
-                  <div v-for="j in 3" :key="j" class="cards__item">
-                    <div class="cards__card skeleton-card">
-                      <div class="card__group">
-                        <div class="skeleton-theme"></div>
-                        <div class="card__btn">
-                          <div></div><div></div><div></div>
-                        </div>
-                      </div>
-                      <div class="card__content">
-                        <div class="skeleton-text"></div>
-                        <div class="card__date">
-                          <div class="skeleton-icon"></div>
-                          <div class="skeleton-date"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div class="skeleton-title"></div>
+                <div v-for="j in 3" :key="j" class="skeleton-card">
+                  <div class="skeleton-theme"></div>
+                  <div class="skeleton-text"></div>
+                  <div class="skeleton-date"></div>
                 </div>
               </div>
             </div>
@@ -60,6 +44,13 @@ onMounted(() => {
   background-color: var(--bg-main, #EAEEF6);
 }
 
+.container {
+  max-width: 1260px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
 .main__block {
   width: 100%;
   margin: 0 auto;
@@ -69,6 +60,7 @@ onMounted(() => {
 .main__content {
   width: 100%;
   display: flex;
+  justify-content: center;  
 }
 
 /* ========== СКЕЛЕТОН ========== */
@@ -80,6 +72,7 @@ onMounted(() => {
 .skeleton-columns {
   display: flex;
   gap: 20px;
+  justify-content: center;  
   min-width: min-content;
 }
 
@@ -88,9 +81,9 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-.skeleton-column__title {
-  height: 20px;
+.skeleton-title {
   width: 100px;
+  height: 20px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
@@ -99,40 +92,43 @@ onMounted(() => {
 }
 
 .skeleton-card {
-  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  background: #FFFFFF;
   border-radius: 10px;
   padding: 15px 13px 19px;
   margin-bottom: 12px;
   height: 130px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 12px;
 }
 
-.skeleton-card__theme {
+.skeleton-theme {
   width: 80px;
   height: 20px;
-  background: rgba(0, 0, 0, 0.1);
+  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
   border-radius: 18px;
 }
 
-.skeleton-card__title {
+.skeleton-text {
   width: 90%;
   height: 18px;
-  background: rgba(0, 0, 0, 0.1);
+  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
   border-radius: 4px;
 }
 
-.skeleton-card__date {
+.skeleton-date {
   width: 60px;
   height: 13px;
-  background: rgba(0, 0, 0, 0.1);
+  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
   border-radius: 4px;
 }
 
-/* Анимация shimmer */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -144,6 +140,10 @@ onMounted(() => {
 
 /* ========== АДАПТИВ ========== */
 @media screen and (max-width: 1200px) {
+  .container {
+    padding: 0 16px;
+  }
+  
   .main__block {
     padding: 40px 0 64px;
   }
@@ -153,6 +153,7 @@ onMounted(() => {
   }
   
   .skeleton-columns {
+    justify-content: flex-start;
     padding-bottom: 20px;
   }
 }
@@ -161,6 +162,7 @@ onMounted(() => {
   .task-desk {
     display: flex;
     flex-direction: row;
+    justify-content: center;  
     overflow-x: auto;
     align-items: flex-start;
   }

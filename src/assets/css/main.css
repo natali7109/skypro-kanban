@@ -1,3 +1,28 @@
+
+:root {
+  /* Цвета категорий */
+  --color-orange-bg: #FFE4C2;
+  --color-orange-text: #FF6D00;
+  --color-green-bg: #B4FDD1;
+  --color-green-text: #06B16E;
+  --color-purple-bg: #E9D4FF;
+  --color-purple-text: #9A48F1;
+  
+  /* Цвета из макета */
+  --color-border-light: #D4DBE5;
+  --color-border-dark: #4E5566;
+  --color-accent-green-light: #BCEC30;
+  --color-accent-green: #99D100;
+  --color-accent-blue: #00C1FF;
+  --color-black: #000000;
+  --color-placeholder: #94A6BE;     
+  /* Основные цвета приложения */
+  --color-primary: #565EEF;
+  --color-primary-hover: #33399b;
+  --color-bg-light: #F1F1F1;
+  --color-bg-modal: rgba(0, 0, 0, 0.4);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -30,42 +55,25 @@ body {
   width: 100%;
   height: 100%;
   font-family: "Roboto", Arial, Helvetica, sans-serif;
-  color: #000000;
+  color: var(--color-black);
 }
 
 /* Глобальные утилитарные классы */
 ._orange {
-  background-color: #FFE4C2;
-  color: #FF6D00;
+  background-color: var(--color-orange-bg);
+  color: var(--color-orange-text);
 }
 
 ._green {
-  background-color: #B4FDD1;
-  color: #06B16E;
+  background-color: var(--color-green-bg);
+  color: var(--color-green-text);
 }
 
 ._purple {
-  background-color: #E9D4FF;
-  color: #9A48F1;
-}
-
-._gray {
-  background: #94A6BE;
-  color: #FFFFFF;
+  background-color: var(--color-purple-bg);
+  color: var(--color-purple-text);
 }
 
 ._hide {
   display: none;
-}
-
-.pop-new-card,
-.pop-browse,
-.pop-exit {
-  display: none;
-}
-
-.pop-new-card:target,
-.pop-browse:target,
-.pop-exit:target {
-  display: block;
 }

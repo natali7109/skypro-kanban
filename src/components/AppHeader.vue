@@ -3,20 +3,20 @@
     <div class="container">
       <div class="header__block">
         <div class="header__logo _show _light">
-          <a href=""><img src="/assets/images/logo.png" alt="logo" /></a>
+          <a href="/"><img src="/assets/images/logo.png" alt="logo" /></a>
         </div>
         <div class="header__logo _dark">
-          <a href=""><img src="/assets/images/logo_dark.png" alt="logo" /></a>
+          <a href="/"><img src="/assets/images/logo_dark.png" alt="logo" /></a>
         </div>
 
         <nav class="header__nav">
-          <a href="#popNewCard" class="header__btn-main-new _hover01">
+          <button class="header__btn-main-new _hover01" @click="openNewCardModal">
             Создать новую задачу
-          </a>
+          </button>
 
-          <a href="#" class="header__user _hover02" @click.prevent="toggleUserMenu">
+          <button class="header__user _hover02" @click="toggleUserMenu">
             Ivan Ivanov
-          </a>
+          </button>
 
           <div class="header__pop-user-set pop-user-set" v-show="showUserMenu">
             <p class="pop-user-set__name">Ivan Ivanov</p>
@@ -24,9 +24,8 @@
 
             <div class="pop-user-set__theme">
               <p>Темная тема</p>
-              <!-- ВОЗВРАЩАЕМ ПОЛЗУНОК (switch) -->
               <label class="switch">
-                <input type="checkbox" @change="toggleTheme" :checked="isDarkTheme" />
+                <input type="checkbox" v-model="isDarkTheme" @change="toggleTheme" />
                 <span class="slider round"></span>
               </label>
             </div>
@@ -48,32 +47,34 @@ export default {
       isDarkTheme: false
     }
   },
+  mounted() {
+    this.loadThemePreference()
+    this.handleOutsideClick = this.handleOutsideClick.bind(this)
+    document.addEventListener('click', this.handleOutsideClick)
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleOutsideClick)
+  },
   methods: {
     toggleUserMenu() {
       this.showUserMenu = !this.showUserMenu
     },
-    closeUserMenu() {
-      this.showUserMenu = false
-    },
     handleExit() {
-      this.closeUserMenu()
+      this.showUserMenu = false
       this.$emit('open-exit-modal')
     },
-    toggleTheme(event) {
-      const isChecked = event.target.checked
-      this.isDarkTheme = isChecked
-      
-      if (isChecked) {
+    openNewCardModal() {
+      this.$emit('open-new-card-modal')
+    },
+    toggleTheme() {
+      if (this.isDarkTheme) {
         this.enableDarkTheme()
       } else {
         this.disableDarkTheme()
       }
-      
-      // Сохраняем настройку в localStorage
       localStorage.setItem('darkTheme', this.isDarkTheme)
     },
     enableDarkTheme() {
-      // Загружаем CSS файл темной темы
       if (!document.getElementById('dark-theme-styles')) {
         const link = document.createElement('link')
         link.id = 'dark-theme-styles'
@@ -83,7 +84,6 @@ export default {
       }
     },
     disableDarkTheme() {
-      // Удаляем CSS файл темной темы
       const link = document.getElementById('dark-theme-styles')
       if (link) {
         link.remove()
@@ -94,37 +94,22 @@ export default {
       if (savedTheme === 'true') {
         this.isDarkTheme = true
         this.enableDarkTheme()
-        // Устанавливаем чекбокс в нужное положение
-        this.$nextTick(() => {
-          const checkbox = this.$el.querySelector('.switch input')
-          if (checkbox) {
-            checkbox.checked = true
-          }
-        })
       }
-    }
-  },
-  mounted() {
-    this.loadThemePreference()
-    
-    // Закрываем меню при клике вне его
-    document.addEventListener('click', (e) => {
-      const userElement = this.$el.querySelector('.header__user')
-      const popupElement = this.$el.querySelector('.header__pop-user-set')
-      
+    },
+    handleOutsideClick(e) {
+      const userElement = this.$el?.querySelector('.header__user')
+      const popupElement = this.$el?.querySelector('.header__pop-user-set')
       if (userElement && popupElement && 
           !userElement.contains(e.target) && 
           !popupElement.contains(e.target)) {
         this.showUserMenu = false
       }
-    })
+    }
   }
 }
 </script>
 
 <style scoped>
-/* ========== БАЗОВЫЕ СТИЛИ (СВЕТЛАЯ ТЕМА) ========== */
-
 .header {
   width: 100%;
   margin: 0 auto;
@@ -170,12 +155,6 @@ export default {
   cursor: pointer;
 }
 
-.header__btn-main-new a {
-  color: #FFFFFF;
-  text-decoration: none;
-  display: block;
-}
-
 .header__user {
   height: 20px;
   display: flex;
@@ -185,7 +164,8 @@ export default {
   font-size: 14px;
   line-height: 20px;
   color: #565EEF;
-  text-decoration: none;
+  background: none;
+  border: none;
   cursor: pointer;
 }
 
@@ -202,7 +182,6 @@ export default {
   padding: 0;
 }
 
-/* Popup user menu */
 .header__pop-user-set {
   display: block;
   position: absolute;
@@ -256,8 +235,6 @@ export default {
   cursor: pointer;
 }
 
-/* ========== СТИЛИ ДЛЯ ПОЛЗУНКА (SWITCH) ========== */
-
 .switch {
   position: relative;
   display: inline-block;
@@ -303,7 +280,6 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
-/* Hover effects */
 ._hover01:hover {
   background-color: #33399b;
 }
