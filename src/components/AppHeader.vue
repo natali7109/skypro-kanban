@@ -15,12 +15,12 @@
           </button>
 
           <button class="header__user _hover02" @click="toggleUserMenu">
-            Ivan Ivanov
+           {{ userName }}
           </button>
 
           <div class="header__pop-user-set pop-user-set" v-show="showUserMenu">
-            <p class="pop-user-set__name">Ivan Ivanov</p>
-            <p class="pop-user-set__mail">ivan.ivanov@gmail.com</p>
+  <p class="pop-user-set__name">{{ userName }}</p>
+  <p class="pop-user-set__mail">{{ userEmail }}</p>
 
             <div class="pop-user-set__theme">
               <p>Темная тема</p>
@@ -30,7 +30,9 @@
               </label>
             </div>
             
-            <button type="button" class="_hover03" @click="handleExit">Выйти</button>
+            <router-link to="/logout" custom v-slot="{ navigate }">
+  <button @click="navigate" class="_hover03">Выйти</button>
+</router-link>
           </div>
         </nav>
       </div>
@@ -41,31 +43,42 @@
 <script>
 export default {
   name: 'AppHeader',
+
   data() {
     return {
       showUserMenu: false,
-      isDarkTheme: false
+      isDarkTheme: false,
+      userName: localStorage.getItem('user') || 'Ivan Ivanov',
+      userEmail: localStorage.getItem('email') || 'ivan.ivanov@gmail.com'
     }
   },
+
   mounted() {
     this.loadThemePreference()
+    this.updateUserData()
     this.handleOutsideClick = this.handleOutsideClick.bind(this)
     document.addEventListener('click', this.handleOutsideClick)
   },
+
   beforeUnmount() {
     document.removeEventListener('click', this.handleOutsideClick)
   },
+
   methods: {
     toggleUserMenu() {
+    this.updateUserData()
       this.showUserMenu = !this.showUserMenu
     },
+
     handleExit() {
       this.showUserMenu = false
       this.$emit('open-exit-modal')
     },
+
     openNewCardModal() {
       this.$emit('open-new-card-modal')
     },
+
     toggleTheme() {
       if (this.isDarkTheme) {
         this.enableDarkTheme()
@@ -74,6 +87,7 @@ export default {
       }
       localStorage.setItem('darkTheme', this.isDarkTheme)
     },
+
     enableDarkTheme() {
       if (!document.getElementById('dark-theme-styles')) {
         const link = document.createElement('link')
@@ -83,12 +97,14 @@ export default {
         document.head.appendChild(link)
       }
     },
+
     disableDarkTheme() {
       const link = document.getElementById('dark-theme-styles')
       if (link) {
         link.remove()
       }
     },
+
     loadThemePreference() {
       const savedTheme = localStorage.getItem('darkTheme')
       if (savedTheme === 'true') {
@@ -96,6 +112,13 @@ export default {
         this.enableDarkTheme()
       }
     },
+
+    
+    updateUserData() {
+      this.userName = localStorage.getItem('user') || 'Ivan Ivanov'
+      this.userEmail = localStorage.getItem('email') || 'ivan.ivanov@gmail.com'
+    },
+
     handleOutsideClick(e) {
       const userElement = this.$el?.querySelector('.header__user')
       const popupElement = this.$el?.querySelector('.header__pop-user-set')
