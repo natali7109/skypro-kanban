@@ -162,6 +162,43 @@ body {
   color: var(--color-black) !important;
 }
 
+/* CardView (страница карточки) */
+.dark-theme .card-block {
+  background-color: var(--color-white) !important;
+  border-color: var(--color-border-light) !important;
+}
+
+.dark-theme .card-header h2 {
+  color: var(--color-black) !important;
+}
+
+.dark-theme .card-id {
+  color: var(--color-placeholder) !important;
+}
+
+.dark-theme .label {
+  color: var(--color-black) !important;
+}
+
+.dark-theme .value {
+  color: var(--color-black) !important;
+}
+
+.dark-theme .description {
+  background: var(--color-bg-light) !important;
+  color: var(--color-black) !important;
+}
+
+.dark-theme .status-value {
+  background: var(--color-bg-light) !important;
+}
+
+.dark-theme .date-value {
+  color: var(--color-placeholder) !important;
+}
+
+
+
 /* Эффект при наведении на модальное окно */
 .pop-new-card__block:hover,
 .pop-browse__block:hover,

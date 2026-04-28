@@ -37,8 +37,22 @@ export default {
         return
       }
 
-      // Сохраняем email как имя пользователя (или можно задать дефолтное имя)
-      const userName = email.value.split('@')[0] // берем часть до @
+      // Проверяем, зарегистрирован ли пользователь
+      const registeredUser = localStorage.getItem('registeredUser')
+      const registeredEmail = localStorage.getItem('registeredEmail')
+      
+      if (!registeredUser || registeredEmail !== email.value) {
+        alert('Пользователь с таким email не найден. Зарегистрируйтесь сначала.')
+        return
+      }
+
+      // Валидация пароля (можно добавить проверку хэша)
+      if (password.value.length < 3) {
+        alert('Неверный пароль')
+        return
+      }
+
+      const userName = email.value.split('@')[0]
       
       localStorage.setItem('isAuth', 'true')
       localStorage.setItem('user', userName)

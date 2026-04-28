@@ -6,7 +6,7 @@
 
         <div class="form-group">
           <label>Название задачи</label>
-          <input v-model="title" type="text" />
+          <input v-model="title" type="text" placeholder="Введите название" />
         </div>
 
         <div class="form-group">
@@ -41,6 +41,10 @@ export default {
     const router = useRouter()
 
     const create = () => {
+      if (!title.value.trim()) {
+        alert('Введите название задачи')
+        return
+      }
       alert(`Создание задачи "${title.value}" (пока не реализовано)`)
       router.push('/')
     }
@@ -53,53 +57,93 @@ export default {
 <style scoped>
 .create-page {
   min-height: 100vh;
-  background: #F1F1F1;
+  background: var(--color-bg-light, #F1F1F1);
   padding: 40px 20px;
+  width: 100%;
 }
+
 .container {
-  max-width: 500px;
+  max-width: 600px;
   margin: 0 auto;
+  width: 100%;
 }
+
 .form-block {
-  background: white;
+  background: var(--color-white, #FFFFFF);
   border-radius: 10px;
   padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-border-light, #D4DBE5);
 }
+
 .form-block h2 {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  color: var(--color-black, #333333);
+  font-size: 24px;
+  font-weight: 600;
 }
+
 .form-group {
   margin-bottom: 20px;
 }
+
 .form-group label {
   display: block;
   margin-bottom: 8px;
+  color: var(--color-placeholder, #555555);
+  font-weight: 500;
 }
+
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
+  padding: 12px;
+  border: 1px solid var(--color-border-light, #dddddd);
   border-radius: 6px;
+  font-size: 16px;
+  background: var(--color-white, #FFFFFF);
+  color: var(--color-black, #333333);
 }
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #565EEF;
+}
+
 .form-actions {
   display: flex;
   gap: 15px;
   margin-top: 30px;
 }
+
 .btn-create {
   background: #565EEF;
-  color: white;
-  padding: 8px 20px;
+  color: #FFFFFF;
+  padding: 10px 24px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
 }
+
+.btn-create:hover {
+  background: #33399b;
+}
+
 .btn-cancel {
   background: #94A6BE;
-  color: white;
-  padding: 8px 20px;
-  border-radius: 4px;
+  color: #FFFFFF;
+  padding: 10px 24px;
+  border-radius: 6px;
   text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.btn-cancel:hover {
+  background: #7b8da8;
 }
 </style>

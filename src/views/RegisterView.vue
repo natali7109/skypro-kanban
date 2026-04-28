@@ -44,12 +44,15 @@ export default {
         return
       }
 
-      // Сохраняем данные пользователя
+      // Сохраняем данные пользователя для авторизации
       localStorage.setItem('isAuth', 'true')
       localStorage.setItem('user', name.value)
       localStorage.setItem('email', email.value)
       
-      // Перенаправляем на главную
+      // 👇 ЭТИ ДВЕ СТРОКИ ДОБАВЛЯЕМ для проверки при входе
+      localStorage.setItem('registeredUser', name.value)
+      localStorage.setItem('registeredEmail', email.value)
+      
       router.push('/')
     }
 

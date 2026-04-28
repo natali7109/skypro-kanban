@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
+
 const routes = [
   {
     path: '/',
@@ -31,50 +32,33 @@ const routes = [
     props: true
   },
   {
-    path: '/create',
-    name: 'create-task',
-    component: () => import('./views/CreateView.vue'),
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/logout',
-    name: 'logout-task',
+    path: '/exit',
+    name: 'exit',
     component: () => import('./views/LogoutView.vue'),
     meta: { requiresAuth: true }
   },
   {
-    path: '/:catchAll(.*)*',  // исправленный wildcard
+    path: '/:catchAll(.*)*',
     name: 'not-found',
     component: () => import('./views/NotFoundView.vue')
   }
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes
 })
 
-// Защита маршрутов с обработкой ошибок
+// Защита маршрутов
 router.beforeEach((to, from, next) => {
-  try {
-    const isAuth = localStorage.getItem('isAuth') === 'true'
+  const isAuth = localStorage.getItem('isAuth') === 'true'
 
-    if (to.meta.requiresAuth) {
-      if (isAuth) {
-        next()
-      } else {
-        next('/login')
-      }
-    } else {
-      if (to.path === '/login' && isAuth) {
-        next('/')
-      } else {
-        next()
-      }
-    }
-  } catch (error) {
-    console.error('Routing protection error:', error)
+  if (to.meta.requiresAuth && !isAuth) {
     next('/login')
+  } else if ((to.path === '/login' || to.path === '/register') && isAuth) {
+    next('/')
+  } else {
+    next()
   }
 })
 

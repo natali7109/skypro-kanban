@@ -2,25 +2,25 @@
   <header class="header">
     <div class="container">
       <div class="header__block">
-        <div class="header__logo _show _light">
-          <a href="/"><img src="/assets/images/logo.png" alt="logo" /></a>
-        </div>
-        <div class="header__logo _dark">
-          <a href="/"><img src="/assets/images/logo_dark.png" alt="logo" /></a>
-        </div>
+        <router-link to="/" class="header__logo _show _light">
+          <img src="/assets/images/logo.png" alt="logo" />
+        </router-link>
+        <router-link to="/" class="header__logo _dark">
+          <img src="/assets/images/logo_dark.png" alt="logo" />
+        </router-link>
 
         <nav class="header__nav">
           <button class="header__btn-main-new _hover01" @click="openNewCardModal">
-            Создать новую задачу
-          </button>
+  Создать новую задачу
+</button>
 
           <button class="header__user _hover02" @click="toggleUserMenu">
-           {{ userName }}
+            {{ userName }}
           </button>
 
           <div class="header__pop-user-set pop-user-set" v-show="showUserMenu">
-  <p class="pop-user-set__name">{{ userName }}</p>
-  <p class="pop-user-set__mail">{{ userEmail }}</p>
+            <p class="pop-user-set__name">{{ userName }}</p>
+            <p class="pop-user-set__mail">{{ userEmail }}</p>
 
             <div class="pop-user-set__theme">
               <p>Темная тема</p>
@@ -30,7 +30,7 @@
               </label>
             </div>
             
-            <router-link to="/logout" custom v-slot="{ navigate }">
+            <router-link to="/exit" custom v-slot="{ navigate }">
   <button @click="navigate" class="_hover03">Выйти</button>
 </router-link>
           </div>
@@ -65,18 +65,13 @@ export default {
   },
 
   methods: {
+openNewCardModal() {
+  this.$emit('open-new-card-modal')
+},
+
     toggleUserMenu() {
-    this.updateUserData()
+      this.updateUserData()
       this.showUserMenu = !this.showUserMenu
-    },
-
-    handleExit() {
-      this.showUserMenu = false
-      this.$emit('open-exit-modal')
-    },
-
-    openNewCardModal() {
-      this.$emit('open-new-card-modal')
     },
 
     toggleTheme() {
@@ -88,22 +83,24 @@ export default {
       localStorage.setItem('darkTheme', this.isDarkTheme)
     },
 
-    enableDarkTheme() {
-      if (!document.getElementById('dark-theme-styles')) {
-        const link = document.createElement('link')
-        link.id = 'dark-theme-styles'
-        link.rel = 'stylesheet'
-        link.href = '/src/assets/css/main_dark.css'
-        document.head.appendChild(link)
-      }
-    },
+enableDarkTheme() {
+  if (!document.getElementById('dark-theme-styles')) {
+    const link = document.createElement('link')
+    link.id = 'dark-theme-styles'
+    link.rel = 'stylesheet'
+    link.href = '/src/assets/css/main_dark.css'
+    document.head.appendChild(link)
+  }
+  document.body.classList.add('dark-theme')
+},
 
-    disableDarkTheme() {
-      const link = document.getElementById('dark-theme-styles')
-      if (link) {
-        link.remove()
-      }
-    },
+disableDarkTheme() {
+  const link = document.getElementById('dark-theme-styles')
+  if (link) {
+    link.remove()
+  }
+  document.body.classList.remove('dark-theme')
+},
 
     loadThemePreference() {
       const savedTheme = localStorage.getItem('darkTheme')
@@ -113,7 +110,6 @@ export default {
       }
     },
 
-    
     updateUserData() {
       this.userName = localStorage.getItem('user') || 'Ivan Ivanov'
       this.userEmail = localStorage.getItem('email') || 'ivan.ivanov@gmail.com'
@@ -133,6 +129,7 @@ export default {
 </script>
 
 <style scoped>
+
 .header {
   width: 100%;
   margin: 0 auto;
@@ -176,6 +173,8 @@ export default {
   font-weight: 500;
   text-align: center;
   cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .header__user {
