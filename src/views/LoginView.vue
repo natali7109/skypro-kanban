@@ -31,6 +31,13 @@ export default {
     const password = ref('')
     const router = useRouter()
 
+    // Функция для обрезки длинного текста (токена)
+    const trimString = (str, maxLength = 25) => {
+      if (!str) return ''
+      if (str.length <= maxLength) return str
+      return str.slice(0, maxLength - 3) + '...'
+    }
+
     const handleLogin = () => {
       if (!email.value || !password.value) {
         alert('Заполните все поля')
@@ -52,11 +59,29 @@ export default {
         return
       }
 
-      const userName = email.value.split('@')[0]
+      
+      let cleanEmail = email.value
+      let userName = email.value.split('@')[0]
+      
+      
+      if (cleanEmail.includes(' ')) {
+        cleanEmail = cleanEmail.split(' ')[0]
+        userName = cleanEmail.split('@')[0]
+      }
+      
+      
+      if (userName.length > 20) {
+        userName = userName.slice(0, 17) + '...'
+      }
+      
+     
+      if (cleanEmail.length > 30) {
+        cleanEmail = cleanEmail.slice(0, 27) + '...'
+      }
       
       localStorage.setItem('isAuth', 'true')
       localStorage.setItem('user', userName)
-      localStorage.setItem('email', email.value)
+      localStorage.setItem('email', cleanEmail)
       
       router.push('/')
     }

@@ -178,7 +178,7 @@ disableDarkTheme() {
 }
 
 .header__user {
-  height: 20px;
+  
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
