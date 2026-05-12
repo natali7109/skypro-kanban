@@ -1,15 +1,23 @@
 <template>
   <div>
     <div class="wrapper">
+      <!-- Модалка выхода -->
       <ExitModal v-if="showExitModal" @close="showExitModal = false" @confirm="handleLogout" />
-      <NewCardModal v-if="showNewCardModal" @close="showNewCardModal = false" @create="handleCreateTask" />
-      <TaskModal v-if="showTaskModal" @close="showTaskModal = false" />
       
+      <!-- Модалка создания задачи -->
+      <NewCardModal 
+        v-if="showNewCardModal" 
+        @close="showNewCardModal = false" 
+        @create="handleCreateTask" 
+      />
+      
+      <!-- Шапка с обработчиками событий -->
       <AppHeader 
         @open-exit-modal="showExitModal = true" 
         @open-new-card-modal="showNewCardModal = true"
       />
 
+      <!-- Доска с задачами -->
       <TaskDesk>
         <TaskColumn 
           v-for="column in columns" 
@@ -20,15 +28,15 @@
             Задач нет
           </div>
           <TaskCard
-            v-else
-            v-for="task in getTasksByStatus(column.status)"
-            :key="task.id"
-            :categoryName="task.topic"
-            :categoryColor="getColorByTopic(task.topic)"
-            :title="task.title"
-            :date="task.date"
-            @open-task-modal="openTaskModal(task)"
-          />
+          :id="task.id"
+  v-for="task in getTasksByStatus(column.status)"
+  :key="task.id"
+  :categoryName="task.topic"
+  :categoryColor="getColorByTopic(task.topic)"
+  :title="task.title"
+  :date="task.date"
+  @open-task-modal="openTaskModal"
+/>
         </TaskColumn>
       </TaskDesk>
     </div>
@@ -38,12 +46,12 @@
 <script>
 import { ref } from "vue";
 import { tasks } from "../mocks/tasks.js";
+import { useRouter } from 'vue-router'
 import AppHeader from "../components/AppHeader.vue";
 import TaskCard from "../components/TaskCard.vue";
 import TaskColumn from "../components/TaskColumn.vue";
 import TaskDesk from "../components/TaskDesk.vue";
 import NewCardModal from "../components/NewCardModal.vue";
-import TaskModal from "../components/TaskModal.vue";
 import ExitModal from "../components/ExitModal.vue";
 
 export default {
@@ -54,14 +62,12 @@ export default {
     TaskColumn,
     TaskDesk,
     NewCardModal,
-    TaskModal,
     ExitModal,
   },
   setup() {
+    const router = useRouter()
     const showExitModal = ref(false);
     const showNewCardModal = ref(false);
-    const showTaskModal = ref(false);
-    const selectedTask = ref(null);
 
     const columns = [
       { status: "Без статуса", title: "Без статуса" },
@@ -84,25 +90,28 @@ export default {
       return colors[topic] || "orange";
     };
 
-    const openTaskModal = (task) => {
-      selectedTask.value = task;
-      showTaskModal.value = true;
-    };
+ 
+
+const openTaskModal = (id) => {   // 👈 замени task на id
+  console.log('Переход на карточку с id:', id)
+  router.push(`/card/${id}`)       // 👈 используем id напрямую
+}
 
     const handleCreateTask = (newTask) => {
       console.log('Создать задачу:', newTask);
-      // TODO: добавить задачу в tasks
+      showNewCardModal.value = false;
     };
 
     const handleLogout = () => {
-      console.log('Выход из аккаунта');
-      // TODO: реальный выход
+      localStorage.removeItem('isAuth')
+      localStorage.removeItem('user')
+      localStorage.removeItem('email')
+      router.push('/login')
     };
 
     return {
       showExitModal,
       showNewCardModal,
-      showTaskModal,
       columns,
       getTasksByStatus,
       getColorByTopic,
@@ -135,12 +144,5 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-@media screen and (max-width: 495px) {
-  .container {
-    width: 100%;
-    padding: 0 16px;
-  }
 }
 </style>

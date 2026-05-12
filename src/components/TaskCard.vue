@@ -36,6 +36,11 @@
 export default {
   name: 'TaskCard',
   props: {
+id: {
+    type: [Number, String],
+    required: true
+  },
+
     categoryName: {
       type: String,
       default: 'Web Design'
@@ -54,9 +59,11 @@ export default {
     }
   },
   methods: {
+    
     openTaskModal() {
-      this.$emit('open-task-modal')
-    }
+    console.log('TaskCard эмитит id:', this.id)
+    this.$emit('open-task-modal', this.id)  
+  }
   }
 }
 </script>
