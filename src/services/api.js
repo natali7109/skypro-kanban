@@ -1,0 +1,46 @@
+import axios from 'axios'  
+
+const API_URL = 'https://wedev-api.sky.pro/api/words/'  
+
+export async function fetchWords({ token }) {  
+
+   try {  
+      const data = await axios.get(API_URL, {
+         headers: {
+            Authorization: 'Bearer ' + token,
+         },
+      })
+
+      return data.data.words
+   } catch (error) {
+      throw new Error(error.message)
+   }
+}
+
+export async function postWord({ token, word }) {  
+   try {  
+      const data = await axios.post(API_URL, word, {
+         headers: {
+            Authorization: 'Bearer ' + token,
+            'Content-Type': '',
+         },
+      })
+   return data.data.words
+   } catch (error) {
+      throw new Error(error.message)
+   }
+}
+
+export async function editWord({ token, id, word }) {
+   try {
+      const data = await axios.put(API_URL + id, word, {
+         headers: {
+            Authorization: 'Bearer ' + token,
+            'Content-Type': '',
+         },
+      })
+   return data.data.words
+   } catch (error) {
+      throw new Error(error.message)
+   }
+}
