@@ -11,11 +11,17 @@
         @create="handleCreateTask" 
       />
       
-      <!-- Шапка с обработчиками событий -->
+      <!-- Шапка -->
       <AppHeader 
         @open-exit-modal="showExitModal = true" 
         @open-new-card-modal="showNewCardModal = true"
       />
+
+      <!-- Сообщение об ошибке -->
+      <div v-if="error" class="error-banner">
+        {{ error }}
+        <button @click="loadTasks" class="retry-btn">Повторить</button>
+      </div>
 
       <!-- Доска с задачами -->
       <TaskDesk>
@@ -44,9 +50,9 @@
 </template>
 
 <script>
-import { ref } from "vue";
-import { tasks } from "../mocks/tasks.js";
+import { ref, onMounted } from "vue";
 import { useRouter } from 'vue-router'
+import { fetchWords, postWord } from "../services/api.js";
 import AppHeader from "../components/AppHeader.vue";
 import TaskCard from "../components/TaskCard.vue";
 import TaskColumn from "../components/TaskColumn.vue";
@@ -65,9 +71,11 @@ export default {
     ExitModal,
   },
   setup() {
-    const router = useRouter()
+    const router = useRouter();
     const showExitModal = ref(false);
     const showNewCardModal = ref(false);
+    const tasks = ref([]);
+    const error = ref('');
 
     const columns = [
       { status: "Без статуса", title: "Без статуса" },
@@ -77,8 +85,33 @@ export default {
       { status: "Готово", title: "Готово" }
     ];
 
+    const loadTasks = async () => {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        error.value = 'Нет токена авторизации';
+        return;
+      }
+      
+      error.value = '';
+      
+      try {
+        const data = await fetchWords({ token });
+        tasks.value = data.map(task => ({
+          id: task._id,
+          title: task.title,
+          description: task.description || '',
+          topic: task.topic,
+          status: task.status,
+          date: task.date ? new Date(task.date).toLocaleDateString('ru-RU') : ''
+        }));
+      } catch (err) {
+        error.value = 'Не удалось загрузить задачи';
+      }
+    };
+
     const getTasksByStatus = (status) => {
-      return tasks.filter(task => task.status === status);
+      return tasks.value.filter(task => task.status === status);
     };
 
     const getColorByTopic = (topic) => {
@@ -91,25 +124,58 @@ export default {
     };
 
     const openTaskModal = (id) => {
-      console.log('Переход на карточку с id:', id)
-      router.push(`/card/${id}`)
+      router.push(`/card/${id}`);
     };
 
-    const handleCreateTask = (newTask) => {
-      console.log('Создать задачу:', newTask);
-      showNewCardModal.value = false;
+    const handleCreateTask = async (newTask) => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        error.value = 'Нет токена авторизации';
+        return;
+      }
+      
+      let formattedDate = '';
+      if (newTask.date) {
+        const dateObj = new Date(newTask.date);
+        if (!isNaN(dateObj.getTime())) {
+          formattedDate = dateObj.toISOString();
+        }
+      }
+      
+      try {
+        await postWord({ 
+          token, 
+          word: {
+            title: newTask.title,
+            description: newTask.description || 'Нет описания',
+            topic: newTask.topic || 'Research',
+            status: newTask.status || 'Без статуса',
+            date: formattedDate || new Date().toISOString()
+          } 
+        });
+        await loadTasks();
+        showNewCardModal.value = false;
+      } catch (err) {
+        error.value = 'Не удалось создать задачу';
+      }
     };
 
     const handleLogout = () => {
-      localStorage.removeItem('isAuth')
-      localStorage.removeItem('user')
-      localStorage.removeItem('email')
-      router.push('/login')
+      localStorage.removeItem('token');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userLogin');
+      router.push('/login');
     };
+
+    onMounted(() => {
+      loadTasks();
+    });
 
     return {
       showExitModal,
       showNewCardModal,
+      tasks,
+      error,
       columns,
       getTasksByStatus,
       getColorByTopic,

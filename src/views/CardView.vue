@@ -1,11 +1,11 @@
 <template>
   <div class="card-page">
     <div class="card-modal">
-      <div class="card-modal__content">
+      <div class="card-modal__content" v-if="task">
         <div class="task-header">
-          <h2 class="task-title">{{ task?.title || 'Загрузка...' }}</h2>
+          <h2 class="task-title">{{ task.title }}</h2>
           <div class="category-badge" :class="categoryBadgeClass">
-            {{ task?.topic }}
+            {{ task.topic }}
           </div>
         </div>
 
@@ -16,8 +16,8 @@
               v-for="s in statuses" 
               :key="s"
               class="status-item"
-              :class="{ active: task?.status === s }"
-              @click="task.status = s"
+              :class="{ active: task.status === s }"
+              @click="updateStatus(s)"
             >
               {{ s }}
             </span>
@@ -27,10 +27,7 @@
         <div class="two-columns">
           <div class="info-section description-section">
             <div class="section-title">Описание задачи</div>
-            <textarea 
-              v-model="task.description" 
-              placeholder="Введите описание задачи..."
-            ></textarea>
+            <textarea v-model="task.description"></textarea>
           </div>
 
           <div class="info-section calendar-section">
@@ -57,6 +54,7 @@
           </div>
         </div>
       </div>
+      <div v-else class="loading-state">Загрузка...</div>
     </div>
   </div>
 </template>
@@ -64,55 +62,115 @@
 <script>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { tasks } from '../mocks/tasks.js'
+import { fetchWordById, editWord, deleteWord } from '../services/api.js'
 
 export default {
   name: 'CardView',
   setup() {
     const route = useRoute()
     const router = useRouter()
-    const id = Number(route.params.id)
-    const task = ref({})
+    const id = route.params.id
+    const task = ref(null)
 
     const statuses = ['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово']
 
     const categoryBadgeClass = computed(() => {
+      if (!task.value) return 'category-orange'
       const map = { 
         'Web Design': 'category-orange', 
         'Research': 'category-green', 
         'Copywriting': 'category-purple' 
       }
-      return map[task.value?.topic] || 'category-orange'
+      return map[task.value.topic] || 'category-orange'
     })
 
-    const loadTask = () => {
-      const found = tasks.find(t => t.id === id)
-      if (found) {
-        task.value = { ...found, description: found.description || '' }
-      } else {
+    const loadTask = async () => {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        router.push('/login')
+        return
+      }
+      
+      try {
+        const data = await fetchWordById({ token, id })
+        if (data) {
+          task.value = {
+            id: data._id,
+            title: data.title,
+            description: data.description || '',
+            topic: data.topic,
+            status: data.status,
+            date: data.date ? data.date.split('T')[0] : ''
+          }
+        } else {
+          router.push('/404')
+        }
+      } catch (error) {
+        console.error('Ошибка загрузки:', error)
         router.push('/404')
       }
     }
 
-    const saveTask = () => {
-      const index = tasks.findIndex(t => t.id === id)
-      if (index !== -1) {
-        tasks[index] = { ...task.value }
-        alert('Задача сохранена')
+    const updateStatus = async (newStatus) => {
+      if (!task.value) return
+      const oldStatus = task.value.status
+      task.value.status = newStatus
+      
+      const token = localStorage.getItem('token')
+      try {
+        await editWord({
+          token,
+          id: task.value.id,
+          word: {
+            title: task.value.title,
+            description: task.value.description,
+            topic: task.value.topic,
+            status: newStatus,
+            date: task.value.date
+          }
+        })
+      } catch (error) {
+        task.value.status = oldStatus
+        console.error('Ошибка обновления статуса:', error)
       }
     }
 
-    const deleteTask = () => {
-      if (confirm('Удалить задачу?')) {
-        const index = tasks.findIndex(t => t.id === id)
-        if (index !== -1) tasks.splice(index, 1)
+    const saveTask = async () => {
+      const token = localStorage.getItem('token')
+      try {
+        await editWord({
+          token,
+          id: task.value.id,
+          word: {
+            title: task.value.title,
+            description: task.value.description,
+            topic: task.value.topic,
+            status: task.value.status,
+            date: task.value.date
+          }
+        })
+        alert('Задача сохранена')
+      } catch (error) {
+        console.error('Ошибка сохранения:', error)
+        alert('Не удалось сохранить задачу')
+      }
+    }
+
+    const deleteTask = async () => {
+      if (!confirm('Удалить задачу?')) return
+      const token = localStorage.getItem('token')
+      try {
+        await deleteWord({ token, id: task.value.id })
         router.push('/')
+      } catch (error) {
+        console.error('Ошибка удаления:', error)
+        alert('Не удалось удалить задачу')
       }
     }
 
     onMounted(() => loadTask())
 
-    return { task, statuses, categoryBadgeClass, saveTask, deleteTask }
+    return { task, statuses, categoryBadgeClass, updateStatus, saveTask, deleteTask }
   }
 }
 </script>
