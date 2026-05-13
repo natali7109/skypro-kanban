@@ -2,7 +2,6 @@
   <div class="card-page">
     <div class="card-modal">
       <div class="card-modal__content">
-        <!-- Заголовок + Категория в одной строке -->
         <div class="task-header">
           <h2 class="task-title">{{ task?.title || 'Загрузка...' }}</h2>
           <div class="category-badge" :class="categoryBadgeClass">
@@ -10,7 +9,6 @@
           </div>
         </div>
 
-        <!-- Статус -->
         <div class="info-section">
           <div class="section-title">Статус</div>
           <div class="status-list">
@@ -26,7 +24,6 @@
           </div>
         </div>
 
-        <!-- Описание задачи + Календарь в две колонки -->
         <div class="two-columns">
           <div class="info-section description-section">
             <div class="section-title">Описание задачи</div>
@@ -40,31 +37,15 @@
             <div class="section-title">Даты</div>
             <div class="calendar">
               <div class="calendar-header">
-                <span class="calendar-month">Сентябрь 2023</span>
-                <div class="calendar-nav">
-                  <button class="nav-arrow">⟨</button>
-                  <button class="nav-arrow">⟩</button>
-                </div>
-              </div>
-              <div class="calendar-weekdays">
-                <span>пн</span><span>вт</span><span>ср</span><span>чт</span>
-                <span>пт</span><span>сб</span><span>вс</span>
-              </div>
-              <div class="calendar-days">
-                <span>1</span><span></span><span></span><span></span><span></span><span></span><span>2</span>
-                <span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span>
-                <span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span>
-                <span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span>
-                <span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span>
+                <span class="calendar-month">Срок исполнения</span>
               </div>
               <div class="calendar-footer">
-                Срок исполнения: <span>{{ task?.date || '09.10.23' }}</span>
+                <input type="date" v-model="task.date" class="date-input" />
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Кнопки -->
         <div class="action-buttons">
           <div class="buttons-left">
             <button class="btn-save" @click="saveTask">Сохранить</button>
@@ -167,7 +148,7 @@ export default {
   padding: 32px 30px;
 }
 
-/* ========== СВЕТЛАЯ ТЕМА (по умолчанию) ========== */
+/* Заголовок */
 .task-header {
   display: flex;
   justify-content: space-between;
@@ -236,7 +217,6 @@ export default {
   flex: 0.6;
 }
 
-/* Текстовая область — высота как у календаря */
 textarea {
   width: 100%;
   padding: 12px;
@@ -245,20 +225,26 @@ textarea {
   font-size: 14px;
   resize: vertical;
   font-family: inherit;
-  height: 100%;
-  min-height: 280px;
+  min-height: 200px;
   box-sizing: border-box;
   background: #FFFFFF;
   color: #000000;
 }
 
-/* Календарь */
+.date-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #D4DBE5;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
 .calendar {
   border: 1px solid #D4DBE5;
   border-radius: 8px;
   padding: 12px;
   background: #FFFFFF;
-  
 }
 
 .calendar-header {
@@ -269,55 +255,8 @@ textarea {
 }
 
 .calendar-month {
-  font-size: 12px;
-  font-weight: 600;
-  color: #000000;
-}
-
-.nav-arrow {
-  background: none;
-  border: none;
-  cursor: pointer;
   font-size: 14px;
-  color: #94A6BE;
-}
-
-.calendar-weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  margin-bottom: 6px;
-}
-
-.calendar-weekdays span {
-  font-size: 10px;
-  color: #94A6BE;
-  padding: 4px;
-}
-
-.calendar-days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  gap: 2px;
-  margin-bottom: 12px;
-}
-
-.calendar-days span {
-  font-size: 10px;
-  padding: 4px;
-  color: #000000;
-}
-
-.calendar-footer {
-  font-size: 10px;
-  color: #94A6BE;
-  text-align: center;
-  padding-top: 8px;
-  border-top: 1px solid #D4DBE5;
-}
-
-.calendar-footer span {
+  font-weight: 600;
   color: #000000;
 }
 
@@ -336,6 +275,11 @@ textarea {
   cursor: pointer;
   font-size: 14px;
   color: #000000;
+  transition: all 0.2s;
+}
+
+.status-item:hover {
+  background: #e0e0e0;
 }
 
 .status-item.active {
@@ -370,6 +314,7 @@ textarea {
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s;
 }
 
 .btn-save {
@@ -404,7 +349,7 @@ textarea {
   color: #FFFFFF;
 }
 
-/* ========== ТЁМНАЯ ТЕМА ========== */
+/* Тёмная тема */
 .dark-theme .card-modal {
   background: #20202C;
 }
@@ -413,38 +358,16 @@ textarea {
   border-bottom-color: #4E5566;
 }
 
-.dark-theme .task-title {
-  color: #FFFFFF;
-}
-
-.dark-theme .section-title {
-  color: #FFFFFF;
-}
-
-.dark-theme textarea {
-  background: #151419;
-  border-color: #4E5566;
-  color: #FFFFFF;
-}
-
-.dark-theme .calendar {
-  background: #151419;
-  border-color: #4E5566;
-}
-
+.dark-theme .task-title,
+.dark-theme .section-title,
 .dark-theme .calendar-month {
   color: #FFFFFF;
 }
 
-.dark-theme .calendar-days span {
-  color: #FFFFFF;
-}
-
-.dark-theme .calendar-footer {
-  border-top-color: #4E5566;
-}
-
-.dark-theme .calendar-footer span {
+.dark-theme textarea,
+.dark-theme .calendar {
+  background: #151419;
+  border-color: #4E5566;
   color: #FFFFFF;
 }
 
@@ -488,47 +411,4 @@ textarea {
     min-height: 150px;
   }
 }
-
-.two-columns {
-  align-items: stretch;
-}
-
-.description-section,
-.calendar-section {
-  display: flex;
-  flex-direction: column;
-}
-
-textarea {
-  flex: 1;
-  min-height: 280px;
-}
-
-.calendar {
-  
-  display: flex;
-  flex-direction: column;
-}
-
-
-.two-columns {
-  align-items: stretch;
-}
-
-.description-section {
-  display: flex;
-  flex-direction: column;
-}
-
-textarea {
-  height: 100%;
-  min-height: auto;
-  resize: vertical;
-}
-
-.calendar-section {
-  display: flex;
-  flex-direction: column;
-}
-
 </style>

@@ -28,15 +28,15 @@
             Задач нет
           </div>
           <TaskCard
-          :id="task.id"
-  v-for="task in getTasksByStatus(column.status)"
-  :key="task.id"
-  :categoryName="task.topic"
-  :categoryColor="getColorByTopic(task.topic)"
-  :title="task.title"
-  :date="task.date"
-  @open-task-modal="openTaskModal"
-/>
+            v-for="task in getTasksByStatus(column.status)"
+            :key="task.id"
+            :id="task.id"
+            :categoryName="task.topic"
+            :categoryColor="getColorByTopic(task.topic)"
+            :title="task.title"
+            :date="task.date"
+            @open-task-modal="openTaskModal"
+          />
         </TaskColumn>
       </TaskDesk>
     </div>
@@ -44,11 +44,6 @@
 </template>
 
 <script>
-import BaseHeader from '@/components/BaseHeader.vue'  
-import Content from '@/components/Content.vue'  
-import { fetchWords } from '@/services/api'  
-import { onMounted, ref } from 'vue'  
-
 import { ref } from "vue";
 import { tasks } from "../mocks/tasks.js";
 import { useRouter } from 'vue-router'
@@ -69,29 +64,6 @@ export default {
     NewCardModal,
     ExitModal,
   },
-
-const words = ref([])
-const loading = ref(false)
-const error = ref('')  
-const getWords = async () => {  
-   try {  
-      loading.value = true  
-      const data = await fetchWords({  
-      token: 'bgc0b8awbwas6g5g5k5o5s5w606g37w3cc3bo3b83k39s3co3c83c03ck',  
-   })  
-
-   if (data) words.value = data  
-
-   } catch (err) {  
-      error.value = err.message  
-
-   } finally {  
-      loading.value = false  
-   }  
-}  
-
-onMounted(getWords)
-
   setup() {
     const router = useRouter()
     const showExitModal = ref(false);
@@ -118,12 +90,10 @@ onMounted(getWords)
       return colors[topic] || "orange";
     };
 
- 
-
-const openTaskModal = (id) => {   // 👈 замени task на id
-  console.log('Переход на карточку с id:', id)
-  router.push(`/card/${id}`)       // 👈 используем id напрямую
-}
+    const openTaskModal = (id) => {
+      console.log('Переход на карточку с id:', id)
+      router.push(`/card/${id}`)
+    };
 
     const handleCreateTask = (newTask) => {
       console.log('Создать задачу:', newTask);
