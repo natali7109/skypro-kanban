@@ -23,8 +23,8 @@
         <button @click="loadTasks" class="retry-btn">Повторить</button>
       </div>
 
-      <!-- Доска с задачами -->
-      <TaskDesk>
+      <!-- Доска с задачами (передаём loading для скелетона) -->
+      <TaskDesk :is-loading="loading">
         <TaskColumn 
           v-for="column in columns" 
           :key="column.status"
@@ -75,6 +75,7 @@ export default {
     const showExitModal = ref(false);
     const showNewCardModal = ref(false);
     const tasks = ref([]);
+    const loading = ref(false);  // ← ДОБАВЛЕНО
     const error = ref('');
 
     const columns = [
@@ -93,6 +94,7 @@ export default {
         return;
       }
       
+      loading.value = true;  // ← ВКЛЮЧАЕМ ЗАГРУЗКУ
       error.value = '';
       
       try {
@@ -107,6 +109,8 @@ export default {
         }));
       } catch (err) {
         error.value = 'Не удалось загрузить задачи';
+      } finally {
+        loading.value = false;  // ← ВЫКЛЮЧАЕМ ЗАГРУЗКУ
       }
     };
 
@@ -143,6 +147,7 @@ export default {
       }
       
       try {
+        loading.value = true;
         await postWord({ 
           token, 
           word: {
@@ -157,6 +162,8 @@ export default {
         showNewCardModal.value = false;
       } catch (err) {
         error.value = 'Не удалось создать задачу';
+      } finally {
+        loading.value = false;
       }
     };
 
@@ -175,6 +182,7 @@ export default {
       showExitModal,
       showNewCardModal,
       tasks,
+      loading,  // ← ДОБАВЛЕНО
       error,
       columns,
       getTasksByStatus,
