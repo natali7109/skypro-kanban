@@ -3,8 +3,8 @@
     <div class="container">
       <div class="main__block">
         <div class="main__content">
-          <!-- СКЕЛЕТОН — показывается пока грузятся данные -->
-          <div v-if="isLoading" class="skeleton-wrapper">
+          <!-- СКЕЛЕТОН -->
+          <div v-if="loading" class="skeleton-wrapper">
             <div class="skeleton-columns">
               <div v-for="i in 5" :key="i" class="skeleton-column">
                 <div class="skeleton-title"></div>
@@ -27,11 +27,14 @@
 </template>
 
 <script setup>
-defineProps({
-  isLoading: {
-    type: Boolean,
-    default: true
-  }
+import { ref, onMounted } from 'vue'
+
+const loading = ref(true)
+
+onMounted(() => {
+  setTimeout(() => {
+    loading.value = false
+  }, 1500)  
 })
 </script>
 

@@ -1,38 +1,18 @@
 <template>
   <div>
     <div class="wrapper">
-      <!-- Модалка выхода -->
       <ExitModal v-if="showExitModal" @close="showExitModal = false" @confirm="handleLogout" />
-      
-      <!-- Модалка создания задачи -->
-      <NewCardModal 
-        v-if="showNewCardModal" 
-        @close="showNewCardModal = false" 
-        @create="handleCreateTask" 
-      />
-      
-      <!-- Шапка -->
-      <AppHeader 
-        @open-exit-modal="showExitModal = true" 
-        @open-new-card-modal="showNewCardModal = true"
-      />
+      <NewCardModal v-if="showNewCardModal" @close="showNewCardModal = false" @create="handleCreateTask" />
+      <AppHeader @open-exit-modal="showExitModal = true" @open-new-card-modal="showNewCardModal = true" />
 
-      <!-- Сообщение об ошибке -->
       <div v-if="error" class="error-banner">
         {{ error }}
         <button @click="loadTasks" class="retry-btn">Повторить</button>
       </div>
 
-      <!-- Доска с задачами (передаём loading для скелетона) -->
-      <TaskDesk :is-loading="loading">
-        <TaskColumn 
-          v-for="column in columns" 
-          :key="column.status"
-          :title="column.title"
-        >
-          <div v-if="getTasksByStatus(column.status).length === 0" class="empty-message">
-            Задач нет
-          </div>
+      <TaskDesk>
+        <TaskColumn v-for="column in columns" :key="column.status" :title="column.title">
+          <div v-if="getTasksByStatus(column.status).length === 0" class="empty-message">Задач нет</div>
           <TaskCard
             v-for="task in getTasksByStatus(column.status)"
             :key="task.id"
@@ -75,7 +55,6 @@ export default {
     const showExitModal = ref(false);
     const showNewCardModal = ref(false);
     const tasks = ref([]);
-    const loading = ref(false);  // ← ДОБАВЛЕНО
     const error = ref('');
 
     const columns = [
@@ -88,13 +67,11 @@ export default {
 
     const loadTasks = async () => {
       const token = localStorage.getItem('token');
-      
       if (!token) {
         error.value = 'Нет токена авторизации';
         return;
       }
       
-      loading.value = true;  // ← ВКЛЮЧАЕМ ЗАГРУЗКУ
       error.value = '';
       
       try {
@@ -109,8 +86,6 @@ export default {
         }));
       } catch (err) {
         error.value = 'Не удалось загрузить задачи';
-      } finally {
-        loading.value = false;  // ← ВЫКЛЮЧАЕМ ЗАГРУЗКУ
       }
     };
 
@@ -147,7 +122,6 @@ export default {
       }
       
       try {
-        loading.value = true;
         await postWord({ 
           token, 
           word: {
@@ -162,8 +136,6 @@ export default {
         showNewCardModal.value = false;
       } catch (err) {
         error.value = 'Не удалось создать задачу';
-      } finally {
-        loading.value = false;
       }
     };
 
@@ -182,7 +154,6 @@ export default {
       showExitModal,
       showNewCardModal,
       tasks,
-      loading,  // ← ДОБАВЛЕНО
       error,
       columns,
       getTasksByStatus,
