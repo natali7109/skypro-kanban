@@ -88,6 +88,7 @@ id: {
   padding: 15px 13px 19px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
 }
 
 .cards__card:hover {

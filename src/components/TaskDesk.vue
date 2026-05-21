@@ -160,11 +160,9 @@ onMounted(() => {
 
 @media (min-width: 1200px) {
   .task-desk {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;  
-    overflow-x: auto;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
   }
 }
 </style>
