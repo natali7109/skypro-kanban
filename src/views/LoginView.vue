@@ -2,16 +2,36 @@
   <div class="login-page">
     <div class="login-container">
       <h2>Вход</h2>
+      
+      <!-- Блок с ошибкой -->
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+      
       <form @submit.prevent="handleLogin">
         <div class="form-group">
           <label>Email</label>
-          <input type="email" v-model="email" placeholder="ivan@example.com" required />
+          <input 
+            type="email" 
+            v-model="login" 
+            placeholder="ivan@example.com" 
+            required 
+            :disabled="loading"
+          />
         </div>
         <div class="form-group">
           <label>Пароль</label>
-          <input type="password" v-model="password" placeholder="••••••••" required />
+          <input 
+            type="password" 
+            v-model="password" 
+            placeholder="••••••••" 
+            required 
+            :disabled="loading"
+          />
         </div>
-        <button type="submit">Войти</button>
+        <button type="submit" :disabled="loading">
+          {{ loading ? 'Вход...' : 'Войти' }}
+        </button>
       </form>
       <p class="register-link">
         Нужно зарегистрироваться? <router-link to="/register">Регистрируйтесь здесь</router-link>
@@ -23,70 +43,53 @@
 <script>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { signIn } from '../services/auth.js'
 
 export default {
   name: 'LoginView',
   setup() {
-    const email = ref('')
+    const login = ref('')
     const password = ref('')
+    const loading = ref(false)
+    const errorMessage = ref('')
     const router = useRouter()
 
-    // Функция для обрезки длинного текста (токена)
-    const trimString = (str, maxLength = 25) => {
-      if (!str) return ''
-      if (str.length <= maxLength) return str
-      return str.slice(0, maxLength - 3) + '...'
+    const handleLogin = async () => {
+      // Очищаем предыдущую ошибку
+      errorMessage.value = ''
+      
+      // Валидация
+      if (!login.value || !password.value) {
+        errorMessage.value = 'Заполните все поля'
+        return
+      }
+      
+      loading.value = true
+      
+      try {
+        // Отправляем запрос на сервер
+        const user = await signIn({
+          login: login.value,
+          password: password.value
+        })
+        
+        // Сохраняем токен и данные пользователя
+        localStorage.setItem('token', user.token)
+        localStorage.setItem('userName', user.name)
+        localStorage.setItem('userLogin', user.login)
+        
+        // Редирект на главную
+        router.push('/')
+        
+      } catch (error) {
+        // Показываем ошибку пользователю
+        errorMessage.value = error.message || 'Ошибка при входе'
+      } finally {
+        loading.value = false
+      }
     }
 
-    const handleLogin = () => {
-      if (!email.value || !password.value) {
-        alert('Заполните все поля')
-        return
-      }
-
-      // Проверяем, зарегистрирован ли пользователь
-      const registeredUser = localStorage.getItem('registeredUser')
-      const registeredEmail = localStorage.getItem('registeredEmail')
-      
-      if (!registeredUser || registeredEmail !== email.value) {
-        alert('Пользователь с таким email не найден. Зарегистрируйтесь сначала.')
-        return
-      }
-
-      // Валидация пароля (можно добавить проверку хэша)
-      if (password.value.length < 3) {
-        alert('Неверный пароль')
-        return
-      }
-
-      
-      let cleanEmail = email.value
-      let userName = email.value.split('@')[0]
-      
-      
-      if (cleanEmail.includes(' ')) {
-        cleanEmail = cleanEmail.split(' ')[0]
-        userName = cleanEmail.split('@')[0]
-      }
-      
-      
-      if (userName.length > 20) {
-        userName = userName.slice(0, 17) + '...'
-      }
-      
-     
-      if (cleanEmail.length > 30) {
-        cleanEmail = cleanEmail.slice(0, 27) + '...'
-      }
-      
-      localStorage.setItem('isAuth', 'true')
-      localStorage.setItem('user', userName)
-      localStorage.setItem('email', cleanEmail)
-      
-      router.push('/')
-    }
-
-    return { email, password, handleLogin }
+    return { login, password, handleLogin, loading, errorMessage }
   }
 }
 </script>
@@ -117,6 +120,16 @@ export default {
   color: #333333;
   font-size: 28px;
   font-weight: 600;
+}
+
+.error-message {
+  background: #ffebee;
+  color: #c62828;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 14px;
 }
 
 .form-group {
@@ -162,8 +175,13 @@ button {
   transition: background 0.3s;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   background: #33399b;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .register-link {

@@ -42,7 +42,6 @@ const routes = [
     name: 'not-found',
     component: () => import('./views/NotFoundView.vue')
   }
-
 ]
 
 const router = createRouter({
@@ -50,9 +49,10 @@ const router = createRouter({
   routes
 })
 
-// Защита маршрутов
+// Защита маршрутов — проверяем наличие токена
 router.beforeEach((to, from, next) => {
-  const isAuth = localStorage.getItem('isAuth') === 'true'
+  const token = localStorage.getItem('token')
+  const isAuth = !!token // true если токен есть
 
   if (to.meta.requiresAuth && !isAuth) {
     next('/login')

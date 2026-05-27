@@ -103,23 +103,34 @@ export default {
     closeModal() {
       this.$emit('close')
     },
-    createTask() {
-      if (!this.title.trim()) {
-        alert('Введите название задачи')
-        return
-      }
-      const newTask = {
-        id: Date.now(),
-        title: this.title,
-        description: this.description,
-        topic: this.selectedCategory,
-        status: this.selectedStatus,
-        date: this.date || new Date().toLocaleDateString('ru-RU')
-      }
-      this.$emit('create', newTask)
-      this.resetForm()
-      this.closeModal()
-    },
+   createTask() {
+  if (!this.title.trim()) {
+    alert('Введите название задачи')
+    return
+  }
+  
+  // Преобразуем дату в ISO формат
+  let formattedDate = '';
+  if (this.date) {
+    const dateObj = new Date(this.date);
+    if (!isNaN(dateObj.getTime())) {
+      formattedDate = dateObj.toISOString();
+    }
+  }
+  
+  const newTask = {
+    id: Date.now(),
+    title: this.title,
+    description: this.description,
+    topic: this.selectedCategory,
+    status: this.selectedStatus,
+    date: formattedDate  // ← ключевое изменение: теперь дата в ISO формате
+  }
+  
+  this.$emit('create', newTask)
+  this.resetForm()
+  this.closeModal()
+},
     resetForm() {
       this.title = ''
       this.description = ''

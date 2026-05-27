@@ -11,8 +11,8 @@
 
         <nav class="header__nav">
           <button class="header__btn-main-new _hover01" @click="openNewCardModal">
-  Создать новую задачу
-</button>
+            Создать новую задачу
+          </button>
 
           <button class="header__user _hover02" @click="toggleUserMenu">
             {{ userName }}
@@ -31,8 +31,8 @@
             </div>
             
             <router-link to="/exit" custom v-slot="{ navigate }">
-  <button @click="navigate" class="_hover03">Выйти</button>
-</router-link>
+              <button @click="navigate" class="_hover03">Выйти</button>
+            </router-link>
           </div>
         </nav>
       </div>
@@ -48,8 +48,8 @@ export default {
     return {
       showUserMenu: false,
       isDarkTheme: false,
-      userName: localStorage.getItem('user') || 'Ivan Ivanov',
-      userEmail: localStorage.getItem('email') || 'ivan.ivanov@gmail.com'
+      userName: localStorage.getItem('userName') || localStorage.getItem('user') || 'Пользователь',
+      userEmail: localStorage.getItem('userLogin') || localStorage.getItem('email') || 'user@example.com'
     }
   },
 
@@ -65,9 +65,9 @@ export default {
   },
 
   methods: {
-openNewCardModal() {
-  this.$emit('open-new-card-modal')
-},
+    openNewCardModal() {
+      this.$emit('open-new-card-modal')
+    },
 
     toggleUserMenu() {
       this.updateUserData()
@@ -83,24 +83,24 @@ openNewCardModal() {
       localStorage.setItem('darkTheme', this.isDarkTheme)
     },
 
-enableDarkTheme() {
-  if (!document.getElementById('dark-theme-styles')) {
-    const link = document.createElement('link')
-    link.id = 'dark-theme-styles'
-    link.rel = 'stylesheet'
-    link.href = '/src/assets/css/main_dark.css'
-    document.head.appendChild(link)
-  }
-  document.body.classList.add('dark-theme')
-},
+    enableDarkTheme() {
+      if (!document.getElementById('dark-theme-styles')) {
+        const link = document.createElement('link')
+        link.id = 'dark-theme-styles'
+        link.rel = 'stylesheet'
+        link.href = '/src/assets/css/main_dark.css'
+        document.head.appendChild(link)
+      }
+      document.body.classList.add('dark-theme')
+    },
 
-disableDarkTheme() {
-  const link = document.getElementById('dark-theme-styles')
-  if (link) {
-    link.remove()
-  }
-  document.body.classList.remove('dark-theme')
-},
+    disableDarkTheme() {
+      const link = document.getElementById('dark-theme-styles')
+      if (link) {
+        link.remove()
+      }
+      document.body.classList.remove('dark-theme')
+    },
 
     loadThemePreference() {
       const savedTheme = localStorage.getItem('darkTheme')
@@ -111,8 +111,8 @@ disableDarkTheme() {
     },
 
     updateUserData() {
-      this.userName = localStorage.getItem('user') || 'Ivan Ivanov'
-      this.userEmail = localStorage.getItem('email') || 'ivan.ivanov@gmail.com'
+      this.userName = localStorage.getItem('userName') || localStorage.getItem('user') || 'Пользователь'
+      this.userEmail = localStorage.getItem('userLogin') || localStorage.getItem('email') || 'user@example.com'
     },
 
     handleOutsideClick(e) {
@@ -129,7 +129,6 @@ disableDarkTheme() {
 </script>
 
 <style scoped>
-
 .header {
   width: 100%;
   margin: 0 auto;
@@ -178,7 +177,6 @@ disableDarkTheme() {
 }
 
 .header__user {
-  
   display: flex;
   flex-wrap: nowrap;
   align-items: center;

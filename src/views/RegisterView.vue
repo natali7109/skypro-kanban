@@ -2,20 +2,46 @@
   <div class="register-page">
     <div class="register-container">
       <h2>Регистрация</h2>
+      
+      <!-- Блок с ошибкой -->
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+      
       <form @submit.prevent="handleRegister">
         <div class="form-group">
           <label>Имя</label>
-          <input type="text" v-model="name" placeholder="Иван Иванов" required />
+          <input 
+            type="text" 
+            v-model="name" 
+            placeholder="Иван Иванов" 
+            required 
+            :disabled="loading"
+          />
         </div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" v-model="email" placeholder="ivan@example.com" required />
+          <input 
+            type="email" 
+            v-model="login" 
+            placeholder="ivan@example.com" 
+            required 
+            :disabled="loading"
+          />
         </div>
         <div class="form-group">
           <label>Пароль</label>
-          <input type="password" v-model="password" placeholder="••••••••" required />
+          <input 
+            type="password" 
+            v-model="password" 
+            placeholder="••••••••" 
+            required 
+            :disabled="loading"
+          />
         </div>
-        <button type="submit">Зарегистрироваться</button>
+        <button type="submit" :disabled="loading">
+          {{ loading ? 'Регистрация...' : 'Зарегистрироваться' }}
+        </button>
       </form>
       <p>Уже есть аккаунт? <router-link to="/login">Войдите здесь</router-link></p>
     </div>
@@ -25,38 +51,60 @@
 <script>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { signUp } from '../services/auth.js'
 
 export default {
   name: 'RegisterView',
   setup() {
     const name = ref('')
-    const email = ref('')
+    const login = ref('')
     const password = ref('')
+    const loading = ref(false)
+    const errorMessage = ref('')
     const router = useRouter()
 
-    const handleRegister = () => {
-      if (!name.value || !email.value || !password.value) {
-        alert('Заполните все поля')
+    const handleRegister = async () => {
+      // Очищаем предыдущую ошибку
+      errorMessage.value = ''
+      
+      // Валидация
+      if (!name.value || !login.value || !password.value) {
+        errorMessage.value = 'Заполните все поля'
         return
       }
+      
       if (password.value.length < 6) {
-        alert('Пароль должен быть не менее 6 символов')
+        errorMessage.value = 'Пароль должен быть не менее 6 символов'
         return
       }
-
-      // Сохраняем данные пользователя для авторизации
-      localStorage.setItem('isAuth', 'true')
-      localStorage.setItem('user', name.value)
-      localStorage.setItem('email', email.value)
       
-      // 👇 ЭТИ ДВЕ СТРОКИ ДОБАВЛЯЕМ для проверки при входе
-      localStorage.setItem('registeredUser', name.value)
-      localStorage.setItem('registeredEmail', email.value)
+      loading.value = true
       
-      router.push('/')
+      try {
+        // Отправляем запрос на сервер
+        const user = await signUp({
+          name: name.value,
+          login: login.value,
+          password: password.value
+        })
+        
+        // Сохраняем токен и данные пользователя
+        localStorage.setItem('token', user.token)
+        localStorage.setItem('userName', user.name)
+        localStorage.setItem('userLogin', user.login)
+        
+        // Редирект на главную
+        router.push('/')
+        
+      } catch (error) {
+        // Показываем ошибку пользователю
+        errorMessage.value = error.message || 'Ошибка при регистрации'
+      } finally {
+        loading.value = false
+      }
     }
 
-    return { name, email, password, handleRegister }
+    return { name, login, password, handleRegister, loading, errorMessage }
   }
 }
 </script>
@@ -87,6 +135,16 @@ export default {
   color: #333333;
   font-size: 28px;
   font-weight: 600;
+}
+
+.error-message {
+  background: #ffebee;
+  color: #c62828;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 14px;
 }
 
 .form-group {
@@ -132,8 +190,13 @@ button {
   transition: background 0.3s;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   background: #33399b;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 p {

@@ -1,10 +1,11 @@
 <template>
   <div class="logout-page">
     <div class="logout-container">
-      <h2>Выйти из аккаунта?</h2>
-      <div class="logout-buttons">
-        <button class="btn-yes" @click="logout">Да, выйти</button>
-        <button class="btn-no" @click="cancel">Нет, остаться</button>
+      <h2>Выход из аккаунта</h2>
+      <p>Вы действительно хотите выйти?</p>
+      <div class="buttons">
+        <button @click="confirmLogout" class="btn-logout">Да, выйти</button>
+        <button @click="cancel" class="btn-cancel">Отмена</button>
       </div>
     </div>
   </div>
@@ -18,10 +19,13 @@ export default {
   setup() {
     const router = useRouter()
 
-    const logout = () => {
-      localStorage.removeItem('isAuth')
-      localStorage.removeItem('user')
-      localStorage.removeItem('email')
+    const confirmLogout = () => {
+      // Очищаем все данные пользователя
+      localStorage.removeItem('token')
+      localStorage.removeItem('userName')
+      localStorage.removeItem('userLogin')
+      
+      // Редирект на страницу входа
       router.push('/login')
     }
 
@@ -29,7 +33,7 @@ export default {
       router.push('/')
     }
 
-    return { logout, cancel }
+    return { confirmLogout, cancel }
   }
 }
 </script>
@@ -37,88 +41,67 @@ export default {
 <style scoped>
 .logout-page {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
 }
 
 .logout-container {
   background: #FFFFFF;
-  padding: 40px 60px;
+  padding: 40px;
   border-radius: 10px;
+  width: 100%;
+  max-width: 400px;
   text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  min-width: 320px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
 .logout-container h2 {
-  margin-bottom: 30px;
-  font-size: 20px;
-  font-weight: 600;
-  color: #000000;
+  margin-bottom: 20px;
+  color: #333;
 }
 
-.logout-buttons {
+.logout-container p {
+  margin-bottom: 30px;
+  color: #666;
+}
+
+.buttons {
   display: flex;
   gap: 15px;
   justify-content: center;
 }
 
-.btn-yes {
-  background: #565EEF;
-  color: #FFFFFF;
+.btn-logout {
+  background: #FF4444;
+  color: white;
+  padding: 10px 24px;
   border: none;
-  padding: 10px 24px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
 }
 
-.btn-yes:hover {
-  background: #33399b;
+.btn-logout:hover {
+  background: #cc0000;
 }
 
-.btn-no {
-  background: transparent;
-  color: #565EEF;
-  border: 1px solid #565EEF;
+.btn-cancel {
+  background: #94A6BE;
+  color: white;
   padding: 10px 24px;
+  border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
 }
 
-.btn-no:hover {
-  background: #33399b;
-  color: #FFFFFF;
-}
-
-/* Тёмная тема */
-.dark-theme .logout-container {
-  background: #20202C;
-  border: 1px solid #565EEF;
-  box-shadow: 0 0 20px rgba(86, 94, 239, 0.3);
-}
-
-.dark-theme .logout-container h2 {
-  color: #FFFFFF;
-}
-
-.dark-theme .btn-no {
-  color: #FFFFFF;
-  border-color: #FFFFFF;
-}
-
-.dark-theme .btn-no:hover {
-  background: #33399b;
-  color: #FFFFFF;
+.btn-cancel:hover {
+  background: #7a8aa0;
 }
 </style>

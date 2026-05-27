@@ -23,12 +23,11 @@ export default {
 
 <style scoped>
 /* ========== БАЗОВЫЕ СТИЛИ (СВЕТЛАЯ ТЕМА) ========== */
-
 .main__column {
-  width: 20%;
-  margin: 0 auto;
-  display: block;
+  min-width: 0;  
+  word-break: break-word;  
 }
+
 
 .column__title {
   padding: 0 10px;
@@ -53,9 +52,8 @@ export default {
 
 @media screen and (max-width: 1200px) {
   .main__column {
-    width: 100%;
-    margin: 0 auto;
-    display: block;
+     min-width: 0;  
+  word-break: break-word;  
   }
   
   .cards {
