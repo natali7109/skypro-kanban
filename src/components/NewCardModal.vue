@@ -1,80 +1,66 @@
 <template>
-  <div class="pop-new-card" @click.self="closeModal">
-    <div class="pop-new-card__container">
-      <div class="pop-new-card__block">
-        <div class="pop-new-card__content">
-          <h3 class="pop-new-card__ttl">Создание задачи</h3>
-          <a href="#" class="pop-new-card__close" @click.prevent="closeModal">&#10006;</a>
-          
-          <div class="pop-new-card__wrap">
-            <form class="pop-new-card__form form-new" @submit.prevent="createTask">
-              <div class="form-new__block">
-                <label for="formTitle" class="subttl">Название задачи</label>
-                <input 
-                  v-model="title"
-                  class="form-new__input" 
-                  type="text" 
-                  id="formTitle" 
-                  placeholder="Введите название задачи..." 
-                  autofocus
-                />
-              </div>
-              <div class="form-new__block">
-                <label for="textArea" class="subttl">Описание задачи</label>
-                <textarea 
-                  v-model="description"
-                  class="form-new__area" 
-                  id="textArea" 
-                  placeholder="Введите описание задачи..."
-                ></textarea>
-              </div>
-            </form>
-            
-            <!-- Календарь (заглушка, можно потом заменить на реальный) -->
-            <div class="pop-new-card__calendar calendar">
-              <p class="calendar__ttl subttl">Даты</p>
-              <div class="calendar__block">
-                <div class="calendar__period">
-                  <p class="calendar__p date-end">
-                    Срок исполнения: 
-                    <input type="date" v-model="date" class="calendar-date-input" />
-                  </p>
+  <div class="pop-browse" @click.self="closeModal">
+    <div class="pop-browse__container">
+      <div class="pop-browse__block">
+        <div class="pop-browse__content">
+          <div class="pop-browse__top-block">
+            <h3 class="pop-browse__ttl">{{ task?.title || 'Название задачи' }}</h3>
+            <div class="categories__theme" :class="categoryClass">
+              <p>{{ task?.topic || 'Web Design' }}</p>
+            </div>
+          </div>
+
+          <!-- ДВЕ КОЛОНКИ -->
+          <div class="pop-browse__two-columns">
+            <!-- Левая колонка -->
+            <div class="pop-browse__left">
+              <div class="status">
+                <p class="status__p subttl">Статус</p>
+                <div class="status__themes">
+                  <div 
+                    v-for="status in statuses" 
+                    :key="status"
+                    class="status__theme"
+                    :class="{ '_gray': task?.status === status }"
+                  >
+                    <p>{{ status }}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          
-          <div class="pop-new-card__categories categories">
-            <p class="categories__p subttl">Категория</p>
-            <div class="categories__themes">
-              <div 
-                v-for="cat in categories" 
-                :key="cat.name"
-                class="categories__theme" 
-                :class="[cat.class, { '_active-category': selectedCategory === cat.name }]"
-                @click="selectedCategory = cat.name"
-              >
-                <p :class="cat.class">{{ cat.name }}</p>
+
+              <div class="form-browse__block">
+                <label class="subttl">Описание задачи</label>
+                <textarea 
+                  class="form-browse__area" 
+                  :value="task?.description || ''" 
+                  readonly
+                  placeholder="Нет описания"
+                ></textarea>
               </div>
             </div>
-          </div>
-          
-          <div class="pop-new-card__categories status">
-            <p class="categories__p subttl">Статус</p>
-            <div class="categories__themes">
-              <div 
-                v-for="stat in statuses" 
-                :key="stat"
-                class="categories__theme" 
-                :class="{ '_active-category': selectedStatus === stat }"
-                @click="selectedStatus = stat"
-              >
-                <p>{{ stat }}</p>
+
+            <!-- Правая колонка - КАЛЕНДАРЬ -->
+            <div class="pop-browse__right">
+              <p class="subttl">Срок исполнения</p>
+              <div class="calendar-wrapper">
+                <input 
+                  type="date" 
+                  class="calendar-input"
+                  :value="formattedDate"
+                  readonly
+                />
               </div>
+              <p class="calendar-deadline">
+                Срок исполнения: {{ task?.date || 'не указана' }}
+              </p>
             </div>
           </div>
-          
-          <button class="form-new__create _hover01" @click="createTask">Создать задачу</button>
+
+          <div class="pop-browse__btn-browse">
+            <button class="_btn-bor _hover03" @click="editTask">Редактировать задачу</button>
+            <button class="_btn-bor _hover03" @click="deleteTask">Удалить задачу</button>
+            <button class="_btn-bg _hover01" @click="closeModal">Закрыть</button>
+          </div>
         </div>
       </div>
     </div>
@@ -83,67 +69,55 @@
 
 <script>
 export default {
-  name: 'NewCardModal',
-  data() {
-    return {
-      title: '',
-      description: '',
-      selectedCategory: 'Web Design',
-      selectedStatus: 'Без статуса',
-      date: '',
-      categories: [
-        { name: 'Web Design', class: '_orange' },
-        { name: 'Research', class: '_green' },
-        { name: 'Copywriting', class: '_purple' }
-      ],
-      statuses: ['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово']
+  name: 'TaskModal',
+  props: {
+    task: {
+      type: Object,
+      default: null
+    }
+  },
+  computed: {
+    statuses() {
+      return ['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово']
+    },
+    categoryClass() {
+      const colors = {
+        'Web Design': '_orange',
+        'Research': '_green', 
+        'Copywriting': '_purple'
+      }
+      return colors[this.task?.topic] || '_orange'
+    },
+    formattedDate() {
+      if (!this.task?.date) return ''
+      // Преобразуем дату из формата "DD.MM.YYYY" или "YYYY-MM-DD"
+      let dateStr = this.task.date
+      if (dateStr.includes('.')) {
+        const parts = dateStr.split('.')
+        if (parts.length === 3) {
+          return `${parts[2]}-${parts[1]}-${parts[0]}`
+        }
+      }
+      return dateStr
     }
   },
   methods: {
     closeModal() {
       this.$emit('close')
     },
-   createTask() {
-  if (!this.title.trim()) {
-    alert('Введите название задачи')
-    return
-  }
-  
-  // Преобразуем дату в ISO формат
-  let formattedDate = '';
-  if (this.date) {
-    const dateObj = new Date(this.date);
-    if (!isNaN(dateObj.getTime())) {
-      formattedDate = dateObj.toISOString();
-    }
-  }
-  
-  const newTask = {
-    id: Date.now(),
-    title: this.title,
-    description: this.description,
-    topic: this.selectedCategory,
-    status: this.selectedStatus,
-    date: formattedDate  // ← ключевое изменение: теперь дата в ISO формате
-  }
-  
-  this.$emit('create', newTask)
-  this.resetForm()
-  this.closeModal()
-},
-    resetForm() {
-      this.title = ''
-      this.description = ''
-      this.selectedCategory = 'Web Design'
-      this.selectedStatus = 'Без статуса'
-      this.date = ''
+    editTask() {
+      this.$emit('edit', this.task)
+    },
+    deleteTask() {
+      this.$emit('delete', this.task)
     }
   }
 }
 </script>
 
+
 <style scoped>
-/* ========== СТИЛИ ПО МАКЕТУ ========== */
+
 
 .pop-new-card {
   width: 100%;

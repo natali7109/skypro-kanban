@@ -39,8 +39,8 @@
           </div>
 
           <div class="pop-browse__btn-browse">
-            <button class="_btn-bor _hover03" @click="editTask">Редактировать</button>
-            <button class="_btn-bor _hover03" @click="deleteTask">Удалить</button>
+            <button class="_btn-bor _hover03" @click="editTask">Редактировать задачу</button>
+            <button class="_btn-bor _hover03" @click="deleteTask">Удалить задачу</button>
             <button class="_btn-bg _hover01" @click="closeModal">Закрыть</button>
           </div>
         </div>
@@ -143,26 +143,24 @@ export default {
   line-height: 24px;
 }
 
-.form-browse__block {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
+.categories__theme {
+  border-radius: 24px;
+  padding: 5px 12px;
 }
 
-.form-browse__area {
-  max-width: 100%;
-  width: 100%;
-  outline: none;
-  padding: 14px;
-  background: #EAEEF6;
-  border: 0.7px solid rgba(148, 166, 190, 0.4);
-  border-radius: 8px;
-  font-size: 14px;
-  line-height: 1;
-  letter-spacing: -0.14px;
-  margin-top: 14px;
-  height: 200px;
-  resize: vertical;
+.categories__theme._orange {
+  background: #ff9800;
+  color: white;
+}
+
+.categories__theme._green {
+  background: #4caf50;
+  color: white;
+}
+
+.categories__theme._purple {
+  background: #9c27b0;
+  color: white;
 }
 
 .status {
@@ -187,7 +185,11 @@ export default {
   padding: 11px 14px 10px;
   margin-right: 7px;
   margin-bottom: 7px;
-  cursor: pointer;
+}
+
+.status__theme._gray {
+  background: #e0e0e0;
+  color: #333;
 }
 
 .status__theme p {
@@ -201,6 +203,28 @@ export default {
   font-size: 14px;
   font-weight: 600;
   line-height: 1;
+}
+
+.form-browse__block {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.form-browse__area {
+  max-width: 100%;
+  width: 100%;
+  outline: none;
+  padding: 14px;
+  background: #EAEEF6;
+  border: 0.7px solid rgba(148, 166, 190, 0.4);
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: -0.14px;
+  margin-top: 14px;
+  height: 200px;
+  resize: vertical;
 }
 
 .calendar__period {

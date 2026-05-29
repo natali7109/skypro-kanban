@@ -3,6 +3,16 @@
     <div class="wrapper">
       <ExitModal v-if="showExitModal" @close="showExitModal = false" @confirm="handleLogout" />
       <NewCardModal v-if="showNewCardModal" @close="showNewCardModal = false" @create="handleCreateTask" />
+      
+      <!-- Модалка просмотра задачи (рабочая) -->
+      <TaskModal 
+        v-if="showTaskModal && selectedTask" 
+        :task="selectedTask"
+        @close="showTaskModal = false"
+        @edit="handleEditTask"
+        @delete="handleDeleteTask"
+      />
+      
       <AppHeader @open-exit-modal="showExitModal = true" @open-new-card-modal="showNewCardModal = true" />
 
       <div v-if="error" class="error-banner">
@@ -32,13 +42,14 @@
 <script>
 import { ref, onMounted } from "vue";
 import { useRouter } from 'vue-router'
-import { fetchWords, postWord } from "../services/api.js";
+import { fetchWords, postWord, deleteWord } from "../services/api.js";
 import AppHeader from "../components/AppHeader.vue";
 import TaskCard from "../components/TaskCard.vue";
 import TaskColumn from "../components/TaskColumn.vue";
 import TaskDesk from "../components/TaskDesk.vue";
 import NewCardModal from "../components/NewCardModal.vue";
 import ExitModal from "../components/ExitModal.vue";
+import TaskModal from "../components/TaskModal.vue";
 
 export default {
   name: "HomeView",
@@ -49,11 +60,14 @@ export default {
     TaskDesk,
     NewCardModal,
     ExitModal,
+    TaskModal,
   },
   setup() {
     const router = useRouter();
     const showExitModal = ref(false);
     const showNewCardModal = ref(false);
+    const showTaskModal = ref(false);
+    const selectedTask = ref(null);
     const tasks = ref([]);
     const error = ref('');
 
@@ -103,7 +117,31 @@ export default {
     };
 
     const openTaskModal = (id) => {
-      router.push(`/card/${id}`);
+      const task = tasks.value.find(t => t.id === id);
+      if (task) {
+        selectedTask.value = task;
+        showTaskModal.value = true;
+      }
+    };
+
+    const handleEditTask = (task) => {
+      showTaskModal.value = false;
+      router.push(`/edit/${task.id}`);
+    };
+
+    const handleDeleteTask = async (task) => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      if (confirm('Вы уверены, что хотите удалить задачу?')) {
+        try {
+          await deleteWord({ token, id: task.id });
+          await loadTasks();
+          showTaskModal.value = false;
+        } catch (err) {
+          error.value = 'Не удалось удалить задачу';
+        }
+      }
     };
 
     const handleCreateTask = async (newTask) => {
@@ -153,18 +191,23 @@ export default {
     return {
       showExitModal,
       showNewCardModal,
+      showTaskModal,
+      selectedTask,
       tasks,
       error,
       columns,
       getTasksByStatus,
       getColorByTopic,
       openTaskModal,
+      handleEditTask,
+      handleDeleteTask,
       handleCreateTask,
       handleLogout,
     };
   },
 };
 </script>
+
 
 <style scoped>
 .wrapper {
