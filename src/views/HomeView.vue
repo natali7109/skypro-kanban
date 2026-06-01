@@ -4,13 +4,22 @@
       <ExitModal v-if="showExitModal" @close="showExitModal = false" @confirm="handleLogout" />
       <NewCardModal v-if="showNewCardModal" @close="showNewCardModal = false" @create="handleCreateTask" />
       
-      <!-- Модалка просмотра задачи (рабочая) -->
+      <!-- Модалка просмотра задачи -->
       <TaskModal 
         v-if="showTaskModal && selectedTask" 
         :task="selectedTask"
         @close="showTaskModal = false"
-        @edit="handleEditTask"
+        @edit="openEditModal"
         @delete="handleDeleteTask"
+      />
+
+      <!-- Модалка редактирования задачи -->
+      <EditTaskModal 
+        v-if="showEditModal && selectedTask" 
+        :task="selectedTask"
+        @close="showEditModal = false"
+        @save="handleSaveTask"
+        @delete="handleDeleteTaskFromEdit"
       />
       
       <AppHeader @open-exit-modal="showExitModal = true" @open-new-card-modal="showNewCardModal = true" />
@@ -42,7 +51,7 @@
 <script>
 import { ref, onMounted } from "vue";
 import { useRouter } from 'vue-router'
-import { fetchWords, postWord, deleteWord } from "../services/api.js";
+import { fetchWords, postWord, deleteWord, editWord } from "../services/api.js";
 import AppHeader from "../components/AppHeader.vue";
 import TaskCard from "../components/TaskCard.vue";
 import TaskColumn from "../components/TaskColumn.vue";
@@ -50,6 +59,7 @@ import TaskDesk from "../components/TaskDesk.vue";
 import NewCardModal from "../components/NewCardModal.vue";
 import ExitModal from "../components/ExitModal.vue";
 import TaskModal from "../components/TaskModal.vue";
+import EditTaskModal from "../components/EditTaskModal.vue";
 
 export default {
   name: "HomeView",
@@ -61,12 +71,14 @@ export default {
     NewCardModal,
     ExitModal,
     TaskModal,
+    EditTaskModal,
   },
   setup() {
     const router = useRouter();
     const showExitModal = ref(false);
     const showNewCardModal = ref(false);
     const showTaskModal = ref(false);
+    const showEditModal = ref(false);
     const selectedTask = ref(null);
     const tasks = ref([]);
     const error = ref('');
@@ -124,11 +136,54 @@ export default {
       }
     };
 
-    const handleEditTask = (task) => {
+    // Открыть модалку редактирования (вместо страницы)
+    const openEditModal = (task) => {
       showTaskModal.value = false;
-      router.push(`/edit/${task.id}`);
+      selectedTask.value = task;
+      showEditModal.value = true;
     };
 
+    // Сохранение из модалки редактирования
+    const handleSaveTask = async (updatedTask) => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      try {
+        await editWord({
+          token,
+          id: updatedTask.id,
+          word: {
+            title: updatedTask.title,
+            description: updatedTask.description,
+            topic: updatedTask.topic,
+            status: updatedTask.status,
+            date: updatedTask.date
+          }
+        });
+        await loadTasks();
+        showEditModal.value = false;
+      } catch (err) {
+        error.value = 'Не удалось сохранить задачу';
+      }
+    };
+
+    // Удаление из модалки редактирования
+    const handleDeleteTaskFromEdit = async (id) => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      if (confirm('Вы уверены, что хотите удалить задачу?')) {
+        try {
+          await deleteWord({ token, id });
+          await loadTasks();
+          showEditModal.value = false;
+        } catch (err) {
+          error.value = 'Не удалось удалить задачу';
+        }
+      }
+    };
+
+    // Удаление из модалки просмотра
     const handleDeleteTask = async (task) => {
       const token = localStorage.getItem('token');
       if (!token) return;
@@ -192,6 +247,7 @@ export default {
       showExitModal,
       showNewCardModal,
       showTaskModal,
+      showEditModal,
       selectedTask,
       tasks,
       error,
@@ -199,15 +255,16 @@ export default {
       getTasksByStatus,
       getColorByTopic,
       openTaskModal,
-      handleEditTask,
+      openEditModal,
+      handleSaveTask,
       handleDeleteTask,
+      handleDeleteTaskFromEdit,
       handleCreateTask,
       handleLogout,
     };
   },
 };
 </script>
-
 
 <style scoped>
 .wrapper {
