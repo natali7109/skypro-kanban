@@ -4,18 +4,24 @@
       <div class="pop-browse__block">
         <div class="pop-browse__content">
           <div class="pop-browse__top-block">
-            <h3 class="pop-browse__ttl">{{ task?.title || 'Название задачи' }}</h3>
+            <h3 class="pop-browse__ttl">Редактирование задачи</h3>
             <div class="categories__theme" :class="categoryClass">
-              <p>{{ task?.topic || 'Web Design' }}</p>
+              <p>{{ editTopic || 'Web Design' }}</p>
             </div>
           </div>
 
-          <!-- СТАТУС — только текущий -->
+          <!-- СТАТУСЫ (активные, для выбора) -->
           <div class="status">
             <p class="status__p subttl">Статус</p>
-            <div class="status__current">
-              <div class="status__theme _gray">
-                <p>{{ task?.status || 'Без статуса' }}</p>
+            <div class="status__themes">
+              <div 
+                v-for="status in statuses" 
+                :key="status"
+                class="status__theme"
+                :class="{ '_gray': editStatus === status }"
+                @click="editStatus = status"
+              >
+                <p>{{ status }}</p>
               </div>
             </div>
           </div>
@@ -26,8 +32,7 @@
               <label class="subttl">Описание задачи</label>
               <textarea 
                 class="form-browse__area" 
-                :value="task?.description || ''" 
-                readonly
+                v-model="editDescription"
                 placeholder="Нет описания"
               ></textarea>
             </div>
@@ -49,6 +54,7 @@
                     :key="day"
                     class="calendar-day"
                     :class="{ 'selected': isSelectedDate(day.date) }"
+                    @click="selectDate(day.date)"
                   >
                     {{ day.day }}
                   </div>
@@ -60,13 +66,14 @@
             </div>
           </div>
 
+          <!-- КНОПКИ -->
           <div class="pop-browse__btn-browse">
             <div class="btn-group-left">
-              <button class="_btn-bor _hover03" @click="editTask">Редактировать задачу</button>
-              <button class="_btn-bor _hover03" @click="deleteTask">Удалить задачу</button>
+              <button class="_btn-bg _hover01" @click="saveTask">Сохранить</button>
+              <button class="_btn-cancel _hover03" @click="closeModal">Отменить</button>
             </div>
             <div class="btn-group-right">
-              <button class="_btn-bg _hover01" @click="closeModal">Закрыть</button>
+              <button class="_btn-delete _hover03" @click="deleteTask">Удалить задачу</button>
             </div>
           </div>
         </div>
@@ -77,18 +84,25 @@
 
 <script>
 export default {
-  name: 'TaskModal',
+  name: 'EditTaskModal',
   props: {
     task: {
       type: Object,
       default: null
     }
   },
+  emits: ['close', 'save', 'delete'],
   data() {
     return {
+      statuses: ['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово'],
       weekDays: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
       currentMonth: new Date().getMonth(),
-      currentYear: new Date().getFullYear()
+      currentYear: new Date().getFullYear(),
+      editTitle: '',
+      editDescription: '',
+      editTopic: 'Web Design',
+      editStatus: 'Без статуса',
+      editDate: ''
     }
   },
   computed: {
@@ -98,7 +112,7 @@ export default {
         'Research': '_green', 
         'Copywriting': '_purple'
       }
-      return colors[this.task?.topic] || '_orange'
+      return colors[this.editTopic] || '_orange'
     },
     currentMonthName() {
       const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
@@ -116,8 +130,8 @@ export default {
       return days
     },
     formattedDate() {
-      if (!this.task?.date) return 'не указана'
-      let dateStr = this.task.date
+      if (!this.editDate) return 'не указана'
+      let dateStr = this.editDate
       if (dateStr.includes('-')) {
         const parts = dateStr.split('-')
         return `${parts[2]}.${parts[1]}.${parts[0].slice(-2)}`
@@ -125,15 +139,48 @@ export default {
       return dateStr
     }
   },
+  watch: {
+    task: {
+      immediate: true,
+      handler(val) {
+        if (val) {
+          this.editTitle = val.title || ''
+          this.editDescription = val.description || ''
+          this.editTopic = val.topic || 'Web Design'
+          this.editStatus = val.status || 'Без статуса'
+          this.editDate = val.date || ''
+          if (this.editDate && this.editDate.includes('.')) {
+            const parts = this.editDate.split('.')
+            this.editDate = `${parts[2]}-${parts[1]}-${parts[0]}`
+          }
+        }
+      }
+    }
+  },
   methods: {
     closeModal() {
       this.$emit('close')
     },
-    editTask() {
-      this.$emit('edit', this.task)
+    saveTask() {
+      if (!this.editTitle.trim()) {
+        alert('Введите название задачи')
+        return
+      }
+      this.$emit('save', {
+        id: this.task.id,
+        title: this.editTitle,
+        description: this.editDescription,
+        topic: this.editTopic,
+        status: this.editStatus,
+        date: this.editDate
+      })
+      this.closeModal()
     },
     deleteTask() {
-      this.$emit('delete', this.task)
+      if (confirm('Вы уверены, что хотите удалить задачу?')) {
+        this.$emit('delete', this.task.id)
+        this.closeModal()
+      }
     },
     changeMonth(delta) {
       let newMonth = this.currentMonth + delta
@@ -149,14 +196,15 @@ export default {
       this.currentYear = newYear
     },
     isSelectedDate(date) {
-      if (!this.task?.date) return false
-      let taskDateStr = this.task.date
-      if (taskDateStr.includes('.')) {
-        const parts = taskDateStr.split('.')
-        taskDateStr = `${parts[2]}-${parts[1]}-${parts[0]}`
-      }
-      const taskDate = new Date(taskDateStr)
-      return date.toDateString() === taskDate.toDateString()
+      if (!this.editDate) return false
+      const selectedDate = new Date(this.editDate)
+      return date.toDateString() === selectedDate.toDateString()
+    },
+    selectDate(date) {
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      this.editDate = `${year}-${month}-${day}`
     }
   }
 }
@@ -212,25 +260,34 @@ export default {
   font-weight: 600;
   line-height: 24px;
 }
+/* СТАТУСЫ */
 .status {
   margin-bottom: 24px;
 }
 .status__p {
   margin-bottom: 14px;
 }
-.status__current {
+.status__themes {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: flex-start;
+  gap: 7px;
 }
 .status__theme {
   border-radius: 24px;
   border: 0.7px solid rgba(148, 166, 190, 0.4);
-  color: white;
-  background: #565EEF;
+  color: #94A6BE;
+  background: transparent;
   padding: 11px 14px 10px;
   white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.status__theme._gray {
+  background: #565EEF;
+  color: white;
+  border-color: #565EEF;
 }
 .status__theme p {
   font-size: 14px;
@@ -253,6 +310,7 @@ export default {
   flex: 2;
   min-width: 0;
 }
+/* ОПИСАНИЕ */
 .form-browse__area {
   width: 100%;
   outline: none;
@@ -266,6 +324,7 @@ export default {
   resize: vertical;
   font-family: inherit;
 }
+/* КАЛЕНДАРЬ - КОМПАКТНЫЙ */
 .calendar {
   background: #FFFFFF;
   border: 0.7px solid rgba(148, 166, 190, 0.4);
@@ -311,7 +370,7 @@ export default {
 .calendar-day {
   font-size: 12px;
   padding: 4px 0;
-  cursor: default;
+  cursor: pointer;
   border-radius: 50%;
   background: transparent;
   color: #333;
@@ -319,7 +378,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
+  
+  transition: all 0.2s;
+}
+.calendar-day:hover {
+  background: #e0e0e0;
 }
 .calendar-day.selected {
   background: #e0e0e0;
@@ -331,6 +394,7 @@ export default {
   margin-top: 10px;
   text-align: center;
 }
+/* КАТЕГОРИИ */
 .categories__theme {
   border-radius: 24px;
   padding: 5px 12px;
@@ -355,6 +419,7 @@ export default {
   display: block;
   margin-bottom: 12px;
 }
+/* КНОПКИ */
 .pop-browse__btn-browse {
   display: flex;
   flex-wrap: wrap;
@@ -371,7 +436,16 @@ export default {
   display: flex;
   gap: 12px;
 }
-._btn-bor {
+._btn-bg {
+  border-radius: 4px;
+  background: #565EEF;
+  border: none;
+  outline: none;
+  color: #FFFFFF;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+._btn-cancel {
   border-radius: 4px;
   border: 0.7px solid #565EEF;
   outline: none;
@@ -380,12 +454,12 @@ export default {
   padding: 8px 14px;
   cursor: pointer;
 }
-._btn-bg {
+._btn-delete {
   border-radius: 4px;
-  background: #565EEF;
-  border: none;
+  border: 0.7px solid #FF4444;
   outline: none;
-  color: #FFFFFF;
+  background: transparent;
+  color: #FF4444;
   padding: 8px 14px;
   cursor: pointer;
 }
@@ -396,6 +470,11 @@ export default {
   background-color: #33399b;
   color: #FFFFFF;
 }
+._btn-delete:hover {
+  background-color: #FF4444;
+  color: #FFFFFF;
+}
+/* АДАПТИВ */
 @media screen and (max-width: 660px) {
   .pop-browse { top: 70px; }
   .pop-browse__container { padding: 0; justify-content: flex-start; }

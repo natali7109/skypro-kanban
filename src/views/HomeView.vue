@@ -3,6 +3,25 @@
     <div class="wrapper">
       <ExitModal v-if="showExitModal" @close="showExitModal = false" @confirm="handleLogout" />
       <NewCardModal v-if="showNewCardModal" @close="showNewCardModal = false" @create="handleCreateTask" />
+      
+      <!-- Модалка просмотра задачи -->
+      <TaskModal 
+        v-if="showTaskModal && selectedTask" 
+        :task="selectedTask"
+        @close="showTaskModal = false"
+        @edit="openEditModal"
+        @delete="handleDeleteTask"
+      />
+
+      <!-- Модалка редактирования задачи -->
+      <EditTaskModal 
+        v-if="showEditModal && selectedTask" 
+        :task="selectedTask"
+        @close="showEditModal = false"
+        @save="handleSaveTask"
+        @delete="handleDeleteTaskFromEdit"
+      />
+      
       <AppHeader @open-exit-modal="showExitModal = true" @open-new-card-modal="showNewCardModal = true" />
 
       <div v-if="error" class="error-banner">
@@ -32,13 +51,15 @@
 <script>
 import { ref, onMounted } from "vue";
 import { useRouter } from 'vue-router'
-import { fetchWords, postWord } from "../services/api.js";
+import { fetchWords, postWord, deleteWord, editWord } from "../services/api.js";
 import AppHeader from "../components/AppHeader.vue";
 import TaskCard from "../components/TaskCard.vue";
 import TaskColumn from "../components/TaskColumn.vue";
 import TaskDesk from "../components/TaskDesk.vue";
 import NewCardModal from "../components/NewCardModal.vue";
 import ExitModal from "../components/ExitModal.vue";
+import TaskModal from "../components/TaskModal.vue";
+import EditTaskModal from "../components/EditTaskModal.vue";
 
 export default {
   name: "HomeView",
@@ -49,11 +70,16 @@ export default {
     TaskDesk,
     NewCardModal,
     ExitModal,
+    TaskModal,
+    EditTaskModal,
   },
   setup() {
     const router = useRouter();
     const showExitModal = ref(false);
     const showNewCardModal = ref(false);
+    const showTaskModal = ref(false);
+    const showEditModal = ref(false);
+    const selectedTask = ref(null);
     const tasks = ref([]);
     const error = ref('');
 
@@ -103,7 +129,74 @@ export default {
     };
 
     const openTaskModal = (id) => {
-      router.push(`/card/${id}`);
+      const task = tasks.value.find(t => t.id === id);
+      if (task) {
+        selectedTask.value = task;
+        showTaskModal.value = true;
+      }
+    };
+
+    // Открыть модалку редактирования (вместо страницы)
+    const openEditModal = (task) => {
+      showTaskModal.value = false;
+      selectedTask.value = task;
+      showEditModal.value = true;
+    };
+
+    // Сохранение из модалки редактирования
+    const handleSaveTask = async (updatedTask) => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      try {
+        await editWord({
+          token,
+          id: updatedTask.id,
+          word: {
+            title: updatedTask.title,
+            description: updatedTask.description,
+            topic: updatedTask.topic,
+            status: updatedTask.status,
+            date: updatedTask.date
+          }
+        });
+        await loadTasks();
+        showEditModal.value = false;
+      } catch (err) {
+        error.value = 'Не удалось сохранить задачу';
+      }
+    };
+
+    // Удаление из модалки редактирования
+    const handleDeleteTaskFromEdit = async (id) => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      if (confirm('Вы уверены, что хотите удалить задачу?')) {
+        try {
+          await deleteWord({ token, id });
+          await loadTasks();
+          showEditModal.value = false;
+        } catch (err) {
+          error.value = 'Не удалось удалить задачу';
+        }
+      }
+    };
+
+    // Удаление из модалки просмотра
+    const handleDeleteTask = async (task) => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      if (confirm('Вы уверены, что хотите удалить задачу?')) {
+        try {
+          await deleteWord({ token, id: task.id });
+          await loadTasks();
+          showTaskModal.value = false;
+        } catch (err) {
+          error.value = 'Не удалось удалить задачу';
+        }
+      }
     };
 
     const handleCreateTask = async (newTask) => {
@@ -153,12 +246,19 @@ export default {
     return {
       showExitModal,
       showNewCardModal,
+      showTaskModal,
+      showEditModal,
+      selectedTask,
       tasks,
       error,
       columns,
       getTasksByStatus,
       getColorByTopic,
       openTaskModal,
+      openEditModal,
+      handleSaveTask,
+      handleDeleteTask,
+      handleDeleteTaskFromEdit,
       handleCreateTask,
       handleLogout,
     };
@@ -175,17 +275,29 @@ export default {
   background-color: #F1F1F1;
 }
 
+.dark-theme .wrapper {
+  background-color: #121212;
+}
+
 .empty-message {
-  padding: 20px;
+  width: 220px;            
+  height: 130px;           
+  padding: 15px 13px 19px;  
   text-align: center;
   color: #94A6BE;
   font-size: 14px;
   background: #f5f5f5;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  min-height: 100px;
+  border-radius: 10px;      
+  margin-bottom: 5px;     
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+}
+
+.dark-theme .empty-message {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed #4E5566;
+  color: #94A6BE;
 }
 </style>

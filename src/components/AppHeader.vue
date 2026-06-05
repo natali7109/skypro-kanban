@@ -145,6 +145,9 @@ export default {
   top: 0;
   left: 0;
   padding: 0 10px;
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .header__logo img {
@@ -161,8 +164,10 @@ export default {
 }
 
 .header__btn-main-new {
-  width: 178px;
+  min-width: 120px;   
+  max-width: 100%;    
   height: 30px;
+  padding: 0 16px;    
   border-radius: 4px;
   background-color: #565EEF;
   color: #FFFFFF;
@@ -173,7 +178,10 @@ export default {
   text-align: center;
   cursor: pointer;
   text-decoration: none;
-  display: inline-block;
+  display: inline-flex;   
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;    
 }
 
 .header__user {

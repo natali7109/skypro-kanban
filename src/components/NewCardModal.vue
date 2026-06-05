@@ -30,17 +30,34 @@
               </div>
             </form>
             
-            <!-- Календарь (заглушка, можно потом заменить на реальный) -->
-            <div class="pop-new-card__calendar calendar">
-              <p class="calendar__ttl subttl">Даты</p>
-              <div class="calendar__block">
-                <div class="calendar__period">
-                  <p class="calendar__p date-end">
-                    Срок исполнения: 
-                    <input type="date" v-model="date" class="calendar-date-input" />
-                  </p>
+            <!-- ТОЧНО ТАКОЙ ЖЕ КАЛЕНДАРЬ КАК В TaskModal -->
+            <div class="pop-new-card__calendar">
+              <p class="subttl">Даты</p>
+              <div class="calendar">
+                <div class="calendar-header">
+                  <button class="calendar-nav" @click="changeMonth(-1)">◀</button>
+                  <span class="calendar-month">{{ currentMonthName }} {{ currentYear }}</span>
+                  <button class="calendar-nav" @click="changeMonth(1)">▶</button>
+                </div>
+                <div class="calendar-weekdays">
+                  <div v-for="day in weekDays" :key="day" class="calendar-weekday">{{ day }}</div>
+                </div>
+                <div class="calendar-days">
+                  <div 
+                    v-for="day in calendarDays" 
+                    :key="day"
+                    class="calendar-day"
+                    :class="{ 'selected': isSelectedDate(day.date) }"
+                    @click="selectDate(day.date)"
+                  >
+                    {{ day.day }}
+                  </div>
                 </div>
               </div>
+              <p class="calendar-deadline">
+  <span v-if="selectedDateObj">Срок исполнения: {{ formattedDate }}</span>
+  <span v-else>Выберите срок исполнения</span>
+</p>
             </div>
           </div>
           
@@ -59,20 +76,7 @@
             </div>
           </div>
           
-          <div class="pop-new-card__categories status">
-            <p class="categories__p subttl">Статус</p>
-            <div class="categories__themes">
-              <div 
-                v-for="stat in statuses" 
-                :key="stat"
-                class="categories__theme" 
-                :class="{ '_active-category': selectedStatus === stat }"
-                @click="selectedStatus = stat"
-              >
-                <p>{{ stat }}</p>
-              </div>
-            </div>
-          </div>
+          
           
           <button class="form-new__create _hover01" @click="createTask">Создать задачу</button>
         </div>
@@ -89,8 +93,11 @@ export default {
       title: '',
       description: '',
       selectedCategory: 'Web Design',
-      selectedStatus: 'Без статуса',
-      date: '',
+      
+      selectedDateObj: null,
+      weekDays: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+      currentMonth: new Date().getMonth(),
+      currentYear: new Date().getFullYear(),
       categories: [
         { name: 'Web Design', class: '_orange' },
         { name: 'Research', class: '_green' },
@@ -99,51 +106,93 @@ export default {
       statuses: ['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово']
     }
   },
+  computed: {
+    currentMonthName() {
+      const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+      return months[this.currentMonth]
+    },
+    calendarDays() {
+      const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate()
+      const days = []
+      for (let i = 1; i <= daysInMonth; i++) {
+        days.push({
+          day: i,
+          date: new Date(this.currentYear, this.currentMonth, i)
+        })
+      }
+      return days
+    },
+    formattedDate() {
+      if (!this.selectedDateObj) return 'не указана'
+      const day = this.selectedDateObj.getDate()
+      const month = this.selectedDateObj.getMonth() + 1
+      const year = this.selectedDateObj.getFullYear()
+      return `${day}.${month}.${year}`
+    }
+  },
   methods: {
     closeModal() {
       this.$emit('close')
     },
-   createTask() {
-  if (!this.title.trim()) {
-    alert('Введите название задачи')
-    return
-  }
-  
-  // Преобразуем дату в ISO формат
-  let formattedDate = '';
-  if (this.date) {
-    const dateObj = new Date(this.date);
-    if (!isNaN(dateObj.getTime())) {
-      formattedDate = dateObj.toISOString();
-    }
-  }
-  
-  const newTask = {
-    id: Date.now(),
-    title: this.title,
-    description: this.description,
-    topic: this.selectedCategory,
-    status: this.selectedStatus,
-    date: formattedDate  // ← ключевое изменение: теперь дата в ISO формате
-  }
-  
-  this.$emit('create', newTask)
-  this.resetForm()
-  this.closeModal()
-},
+    changeMonth(delta) {
+      let newMonth = this.currentMonth + delta
+      let newYear = this.currentYear
+      if (newMonth < 0) {
+        newMonth = 11
+        newYear--
+      } else if (newMonth > 11) {
+        newMonth = 0
+        newYear++
+      }
+      this.currentMonth = newMonth
+      this.currentYear = newYear
+    },
+    isSelectedDate(date) {
+      if (!this.selectedDateObj) return false
+      return date.toDateString() === this.selectedDateObj.toDateString()
+    },
+    selectDate(date) {
+      this.selectedDateObj = date
+    },
+    createTask() {
+      if (!this.title.trim()) {
+        alert('Введите название задачи')
+        return
+      }
+      
+      let formattedDate = ''
+      if (this.selectedDateObj) {
+        formattedDate = this.selectedDateObj.toISOString()
+      }
+      
+      const newTask = {
+        id: Date.now(),
+        title: this.title,
+        description: this.description,
+        topic: this.selectedCategory,
+        status: 'Без статуса',
+        date: formattedDate
+      }
+      
+      this.$emit('create', newTask)
+      this.resetForm()
+      this.closeModal()
+    },
     resetForm() {
       this.title = ''
       this.description = ''
       this.selectedCategory = 'Web Design'
-      this.selectedStatus = 'Без статуса'
-      this.date = ''
+      
+      this.selectedDateObj = null
+      this.currentMonth = new Date().getMonth()
+      this.currentYear = new Date().getFullYear()
     }
   }
 }
 </script>
 
 <style scoped>
-/* ========== СТИЛИ ПО МАКЕТУ ========== */
+/* ========== ВСЕ СТИЛИ КРОМЕ КАЛЕНДАРЯ ОСТАЮТСЯ ТЕ ЖЕ ========== */
 
 .pop-new-card {
   width: 100%;
@@ -212,12 +261,12 @@ export default {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 20px;
+  gap: 24px;  
   flex-wrap: wrap;
 }
 
 .pop-new-card__form {
-  flex: 1;
+  flex: 4;
   min-width: 250px;
 }
 
@@ -254,28 +303,95 @@ export default {
   resize: vertical;
 }
 
-/* Календарь */
+/* ===== ТОЧНО ТАКИЕ ЖЕ СТИЛИ КАЛЕНДАРЯ КАК В TaskModal ===== */
+
+.pop-new-card__calendar {
+  flex: 2;
+  min-width: 0;
+  
+}
+
 .calendar {
-  width: 220px;
-}
-
-.calendar__ttl {
-  margin-bottom: 14px;
-}
-
-.calendar__p {
-  color: #94A6BE;
-  font-size: 14px;
-  line-height: 1;
-}
-
-.calendar-date-input {
-  margin-top: 8px;
-  padding: 10px;
+  background: #FFFFFF;
   border: 0.7px solid rgba(148, 166, 190, 0.4);
-  border-radius: 8px;
-  width: 100%;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.calendar-nav {
+  background: transparent;
+  border: none;
+  cursor: pointer;
   font-size: 14px;
+  color: #565EEF;
+  padding: 2px 6px;
+}
+
+.calendar-month {
+  font-size: 13px;
+  font-weight: 600;
+  color: #000;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.calendar-weekday {
+  font-size: 11px;
+  color: #94A6BE;
+  padding: 4px 0;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  gap: 2px;
+}
+
+.calendar-day {
+  font-size: 12px;
+  padding: 6px 0;
+  cursor: pointer;
+  border-radius: 50%;
+  background: transparent;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+}
+
+.calendar-day.selected {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.calendar-deadline {
+  color: #94A6BE;
+  font-size: 12px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.subttl {
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  display: block;
+  margin-bottom: 12px;
 }
 
 /* Категории и статус */
@@ -329,13 +445,6 @@ export default {
   color: #9A48F1;
 }
 
-.subttl {
-  color: #000;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
-}
-
 .form-new__create {
   width: 132px;
   height: 30px;
@@ -370,7 +479,7 @@ export default {
   .pop-new-card__wrap {
     flex-direction: column;
   }
-  .calendar {
+  .pop-new-card__calendar {
     width: 100%;
   }
 }

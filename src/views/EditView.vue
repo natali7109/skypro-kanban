@@ -4,16 +4,12 @@
       <div class="form-block">
         <h2>Редактирование задачи</h2>
         
-        <!-- Индикатор загрузки -->
         <div v-if="loading" class="loading-state">
           <div class="spinner-small"></div>
           <p>Загрузка задачи...</p>
         </div>
         
-        <!-- Форма редактирования -->
         <template v-else-if="task">
-          <p><strong>ID задачи:</strong> {{ id }}</p>
-          
           <div class="form-group">
             <label>Название задачи</label>
             <input v-model="task.title" type="text" :disabled="saving" />
@@ -49,7 +45,6 @@
             <input type="date" v-model="task.date" :disabled="saving" />
           </div>
 
-          <!-- Сообщение об ошибке -->
           <div v-if="errorMessage" class="error-message-small">
             {{ errorMessage }}
           </div>
@@ -62,7 +57,6 @@
           </div>
         </template>
 
-        <!-- Если задача не найдена -->
         <div v-else class="not-found">
           <p>Задача не найдена</p>
           <button @click="$router.push('/')" class="btn-save">Вернуться на главную</button>
@@ -82,7 +76,8 @@ export default {
   setup() {
     const route = useRoute()
     const router = useRouter()
-    const id = Number(route.params.id)
+    // НЕ ПРЕОБРАЗУЕМ В NUMBER — оставляем как строку
+    const id = route.params.id
     
     const task = ref(null)
     const loading = ref(true)
@@ -111,7 +106,7 @@ export default {
             description: word.description || '',
             topic: word.topic,
             status: word.status,
-            date: word.date || new Date().toISOString().split('T')[0]
+            date: word.date ? word.date.split('T')[0] : ''
           }
         } else {
           task.value = null
@@ -128,7 +123,6 @@ export default {
     const save = async () => {
       if (!task.value) return
       
-      // Валидация
       if (!task.value.title.trim()) {
         errorMessage.value = 'Введите название задачи'
         return
@@ -156,8 +150,7 @@ export default {
           }
         })
         
-        // После успешного сохранения переходим на карточку
-        router.push(`/card/${id}`)
+        router.push('/')
         
       } catch (error) {
         console.error('Ошибка сохранения:', error)
@@ -168,14 +161,14 @@ export default {
     }
 
     const cancel = () => {
-      router.push(`/card/${id}`)
+      router.push('/')
     }
 
     onMounted(() => {
       loadTask()
     })
 
-    return { id, task, loading, saving, errorMessage, save, cancel }
+    return { task, loading, saving, errorMessage, save, cancel }
   }
 }
 </script>
