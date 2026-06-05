@@ -374,12 +374,11 @@ export default {
   border-radius: 50%;
   background: transparent;
   color: #333;
-  width: 28px;
-  height: 28px;
+  aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
+  
   transition: all 0.2s;
 }
 .calendar-day:hover {

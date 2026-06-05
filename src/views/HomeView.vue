@@ -275,17 +275,29 @@ export default {
   background-color: #F1F1F1;
 }
 
+.dark-theme .wrapper {
+  background-color: #121212;
+}
+
 .empty-message {
-  padding: 20px;
+  width: 220px;            
+  height: 130px;           
+  padding: 15px 13px 19px;  
   text-align: center;
   color: #94A6BE;
   font-size: 14px;
   background: #f5f5f5;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  min-height: 100px;
+  border-radius: 10px;      
+  margin-bottom: 5px;     
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+}
+
+.dark-theme .empty-message {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed #4E5566;
+  color: #94A6BE;
 }
 </style>
