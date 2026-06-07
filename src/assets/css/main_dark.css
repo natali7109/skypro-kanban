@@ -1,5 +1,5 @@
 :root {
-  /* Цвета категорий (инвертированные) */
+  /* Цвета категорий  */
   --color-orange-bg: #FF6D00;
   --color-orange-text: #FFE4C2;
   --color-green-bg: #06B16E;
@@ -238,7 +238,7 @@ body {
   transition: all 0.3s ease !important;
 }
 
-/* Убираем серую рамку, оставляем только подсветку */
+/* Убираю серую рамку, только подсветка*/
 .pop-new-card__block,
 .pop-browse__block,
 .pop-exit__block {

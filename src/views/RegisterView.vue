@@ -3,7 +3,7 @@
     <div class="register-container">
       <h2>Регистрация</h2>
       
-      <!-- Блок с ошибкой -->
+       
       <div v-if="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
@@ -81,23 +81,23 @@ export default {
       loading.value = true
       
       try {
-        // Отправляем запрос на сервер
+         
         const user = await signUp({
           name: name.value,
           login: login.value,
           password: password.value
         })
         
-        // Сохраняем токен и данные пользователя
+         
         localStorage.setItem('token', user.token)
         localStorage.setItem('userName', user.name)
         localStorage.setItem('userLogin', user.login)
         
-        // Редирект на главную
+        
         router.push('/')
         
       } catch (error) {
-        // Показываем ошибку пользователю
+        
         errorMessage.value = error.message || 'Ошибка при регистрации'
       } finally {
         loading.value = false

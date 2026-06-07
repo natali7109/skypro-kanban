@@ -94,7 +94,6 @@ export default {
     const loadTasks = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
-        error.value = 'Нет токена авторизации';
         return;
       }
       
@@ -111,7 +110,6 @@ export default {
           date: task.date ? new Date(task.date).toLocaleDateString('ru-RU') : ''
         }));
       } catch (err) {
-        error.value = 'Не удалось загрузить задачи';
       }
     };
 
@@ -136,14 +134,13 @@ export default {
       }
     };
 
-    // Открыть модалку редактирования (вместо страницы)
+    
     const openEditModal = (task) => {
       showTaskModal.value = false;
       selectedTask.value = task;
       showEditModal.value = true;
     };
 
-    // Сохранение из модалки редактирования
     const handleSaveTask = async (updatedTask) => {
       const token = localStorage.getItem('token');
       if (!token) return;
@@ -163,11 +160,10 @@ export default {
         await loadTasks();
         showEditModal.value = false;
       } catch (err) {
-        error.value = 'Не удалось сохранить задачу';
       }
     };
 
-    // Удаление из модалки редактирования
+    
     const handleDeleteTaskFromEdit = async (id) => {
       const token = localStorage.getItem('token');
       if (!token) return;
@@ -178,12 +174,11 @@ export default {
           await loadTasks();
           showEditModal.value = false;
         } catch (err) {
-          error.value = 'Не удалось удалить задачу';
         }
       }
     };
 
-    // Удаление из модалки просмотра
+    
     const handleDeleteTask = async (task) => {
       const token = localStorage.getItem('token');
       if (!token) return;
@@ -194,7 +189,6 @@ export default {
           await loadTasks();
           showTaskModal.value = false;
         } catch (err) {
-          error.value = 'Не удалось удалить задачу';
         }
       }
     };
@@ -202,7 +196,6 @@ export default {
     const handleCreateTask = async (newTask) => {
       const token = localStorage.getItem('token');
       if (!token) {
-        error.value = 'Нет токена авторизации';
         return;
       }
       
@@ -228,7 +221,6 @@ export default {
         await loadTasks();
         showNewCardModal.value = false;
       } catch (err) {
-        error.value = 'Не удалось создать задачу';
       }
     };
 

@@ -62,7 +62,7 @@ export default {
     })
     const router = useRouter()
 
-    // Кнопка неактивна, если есть ошибки в полях или идет загрузка
+    
     const isButtonDisabled = computed(() => {
       return loading.value || !!errors.value.login || !!errors.value.password || !login.value || !password.value
     })
@@ -93,10 +93,8 @@ export default {
     }
 
     const handleLogin = async () => {
-      // Очищаем предыдущие ошибки
       generalError.value = ''
       
-      // Валидация полей
       if (!validateForm()) {
         return
       }
@@ -116,7 +114,6 @@ export default {
         router.push('/')
         
       } catch (error) {
-        // Ошибка авторизации — красная обводка для обоих полей
         errors.value.login = ' '
         errors.value.password = ' '
         generalError.value = 'Введенные вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
@@ -167,7 +164,7 @@ export default {
   font-weight: 600;
 }
 
-/* Общее сообщение об ошибке (под полями) */
+
 .error-message {
   background: #ffebee;
   color: #c62828;
@@ -178,14 +175,13 @@ export default {
   font-size: 14px;
 }
 
-/* Ошибка под конкретным полем */
+
 .field-error {
   color: #c62828;
   font-size: 12px;
   margin-top: 5px;
 }
 
-/* Красная обводка поля */
 .form-group.has-error input {
   border-color: #c62828 !important;
   background-color: #fff5f5 !important;
@@ -226,7 +222,7 @@ export default {
   border-color: #c62828 !important;
 }
 
-/* Кнопка */
+
 button {
   width: 100%;
   padding: 12px;

@@ -136,7 +136,6 @@ export default {
 </script>
 
 <style scoped>
-/* Стили остаются ТОЧНО ТАКИМИ ЖЕ, как у тебя были */
 .header {
   width: 100%;
   background-color: #FFFFFF;

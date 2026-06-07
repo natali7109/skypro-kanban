@@ -176,7 +176,7 @@ export default {
 </script>
 
 <style scoped>
-/* Затемнённый фон */
+
 .card-page {
   position: fixed;
   top: 0;
@@ -191,7 +191,7 @@ export default {
   overflow-y: auto;
 }
 
-/* Модальное окно */
+
 .card-modal {
   max-width: 720px;
   width: 90%;
@@ -206,7 +206,7 @@ export default {
   padding: 32px 30px;
 }
 
-/* Заголовок */
+
 .task-header {
   display: flex;
   justify-content: space-between;
@@ -223,7 +223,7 @@ export default {
   color: #000000;
 }
 
-/* Бейдж категории */
+
 .category-badge {
   padding: 6px 16px;
   border-radius: 24px;
@@ -246,7 +246,7 @@ export default {
   color: #9A48F1;
 }
 
-/* Секции */
+
 .info-section {
   margin-bottom: 24px;
 }
@@ -258,7 +258,7 @@ export default {
   color: #000000;
 }
 
-/* Две колонки */
+
 .two-columns {
   display: flex;
   gap: 30px;
@@ -318,7 +318,7 @@ textarea {
   color: #000000;
 }
 
-/* Статусы */
+
 .status-list {
   display: flex;
   flex-wrap: wrap;
@@ -346,7 +346,7 @@ textarea {
   border-color: #94A6BE;
 }
 
-/* Кнопки */
+
 .action-buttons {
   display: flex;
   justify-content: space-between;
@@ -407,7 +407,7 @@ textarea {
   color: #FFFFFF;
 }
 
-/* Тёмная тема */
+
 .dark-theme .card-modal {
   background: #20202C;
 }
@@ -443,7 +443,7 @@ textarea {
   border-top-color: #4E5566;
 }
 
-/* Адаптив */
+
 @media (max-width: 600px) {
   .two-columns {
     flex-direction: column;

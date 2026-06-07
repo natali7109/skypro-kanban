@@ -10,7 +10,6 @@
   </div>
 </div>
 
-          <!-- СТАТУСЫ (активные, для выбора) -->
           <div class="status">
             <p class="status__p subttl">Статус</p>
             <div class="status__themes">
@@ -26,7 +25,6 @@
             </div>
           </div>
 
-          <!-- ДВЕ КОЛОНКИ: 4 / 2 -->
           <div class="pop-browse__two-columns">
             <div class="pop-browse__left">
               <label class="subttl">Описание задачи</label>
@@ -66,7 +64,6 @@
             </div>
           </div>
 
-          <!-- КНОПКИ -->
           <div class="pop-browse__btn-browse">
   <div class="btn-group-left">
     <button class="_btn-bg _hover01" @click="saveTask">Сохранить</button>
@@ -273,7 +270,7 @@ export default {
   font-weight: 600;
   line-height: 24px;
 }
-/* СТАТУСЫ */
+
 .status {
   margin-bottom: 24px;
 }
@@ -307,7 +304,7 @@ export default {
   line-height: 1;
   letter-spacing: -0.14px;
 }
-/* ДВЕ КОЛОНКИ: 4 / 2 */
+
 .pop-browse__two-columns {
   display: flex;
   gap: 24px;
@@ -323,7 +320,7 @@ export default {
   flex: 2;
   min-width: 0;
 }
-/* ОПИСАНИЕ */
+
 .form-browse__area {
   width: 100%;
   outline: none;
@@ -337,7 +334,7 @@ export default {
   resize: vertical;
   font-family: inherit;
 }
-/* КАЛЕНДАРЬ - КОМПАКТНЫЙ */
+
 .calendar {
   background: #FFFFFF;
   border: 0.7px solid rgba(148, 166, 190, 0.4);
@@ -407,7 +404,7 @@ export default {
   margin-top: 10px;
   text-align: center;
 }
-/* КАТЕГОРИИ */
+
 .categories__theme {
   border-radius: 24px;
   padding: 5px 12px;
@@ -432,7 +429,7 @@ export default {
   display: block;
   margin-bottom: 12px;
 }
-/* КНОПКИ */
+
 .pop-browse__btn-browse {
   display: flex;
   flex-wrap: wrap;
@@ -452,7 +449,7 @@ export default {
   gap: 12px;
 }
 
-/* Синяя кнопка (Сохранить, Закрыть) */
+
 ._btn-bg {
   border-radius: 4px;
   background: #565EEF;
@@ -467,7 +464,6 @@ export default {
   background-color: #33399b;
 }
 
-/* Прозрачная кнопка  (Отменить) */
 ._btn-cancel {
   border-radius: 4px;
   border: 0.7px solid #FFFFFF;
@@ -484,7 +480,7 @@ export default {
   border: none;
 }
 
-/* Кнопка "Удалить задачу" (прозрачная, красная обводка, белый текст) */
+
 ._btn-delete {
   border-radius: 4px;
   border: 0.7px solid #FFFFFF;
@@ -500,7 +496,7 @@ export default {
   color: #FFFFFF;
   border: none;
 }
-/* АДАПТИВ */
+
 @media screen and (max-width: 660px) {
   .pop-browse { top: 70px; }
   .pop-browse__container { padding: 0; justify-content: flex-start; }

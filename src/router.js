@@ -49,10 +49,10 @@ const router = createRouter({
   routes
 })
 
-// Защита маршрутов — проверяем наличие токена
+ 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  const isAuth = !!token // true если токен есть
+  const isAuth = !!token  
 
   if (to.meta.requiresAuth && !isAuth) {
     next('/login')

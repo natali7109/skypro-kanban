@@ -272,7 +272,7 @@ export default {
   background: #7a8aa0;
 }
 
-/* Состояние загрузки */
+
 .loading-state {
   text-align: center;
   padding: 40px 20px;

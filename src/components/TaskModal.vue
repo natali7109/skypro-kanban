@@ -10,7 +10,7 @@
             </div>
           </div>
 
-          <!-- СТАТУС — только текущий -->
+          
           <div class="status">
             <p class="status__p subttl">Статус</p>
             <div class="status__current">
@@ -20,7 +20,7 @@
             </div>
           </div>
 
-          <!-- ДВЕ КОЛОНКИ: 4 / 2 -->
+      
           <div class="pop-browse__two-columns">
             <div class="pop-browse__left">
               <label class="subttl">Описание задачи</label>
@@ -246,7 +246,7 @@ export default {
   line-height: 1;
   letter-spacing: -0.14px;
 }
-/* ДВЕ КОЛОНКИ: 4 / 2 */
+
 .pop-browse__two-columns {
   display: flex;
   gap: 24px;

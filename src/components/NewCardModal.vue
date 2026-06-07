@@ -98,7 +98,7 @@ export default {
     
     return { modalContentRef }
   },
-  // ВСЁ ОСТАЛЬНОЕ (data, computed, methods) РАБОТАЕТ КАК ОБЫЧНО
+ 
   data() {
     return {
       title: '',
@@ -200,7 +200,6 @@ export default {
 </script>
 
 <style scoped>
-/* ========== ВСЕ СТИЛИ КРОМЕ КАЛЕНДАРЯ ОСТАЮТСЯ ТЕ ЖЕ ========== */
 
 .pop-new-card {
   width: 100%;
@@ -311,7 +310,6 @@ export default {
   resize: vertical;
 }
 
-/* ===== ТОЧНО ТАКИЕ ЖЕ СТИЛИ КАЛЕНДАРЯ КАК В TaskModal ===== */
 
 .pop-new-card__calendar {
   flex: 2;
@@ -402,7 +400,7 @@ export default {
   margin-bottom: 12px;
 }
 
-/* Категории и статус */
+
 .categories {
   margin-bottom: 20px;
 }
@@ -472,7 +470,7 @@ export default {
   background-color: #33399b;
 }
 
-/* Адаптив */
+
 @media screen and (max-width: 660px) {
   .pop-new-card {
     top: 70px;

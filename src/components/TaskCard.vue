@@ -169,7 +169,7 @@ id: {
   letter-spacing: 0.2px;
 }
 
-/* Animation */
+
 @keyframes card-animation {
   0% {
     height: 0;
