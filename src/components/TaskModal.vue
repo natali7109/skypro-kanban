@@ -1,7 +1,7 @@
 <template>
-  <div class="pop-browse" @click.self="closeModal">
+  <div class="pop-browse">
     <div class="pop-browse__container">
-      <div class="pop-browse__block">
+      <div class="pop-browse__block" ref="modalContentRef">
         <div class="pop-browse__content">
           <div class="pop-browse__top-block">
             <h3 class="pop-browse__ttl">{{ task?.title || 'Название задачи' }}</h3>
@@ -76,13 +76,22 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+import { onClickOutside } from '@vueuse/core'
+
 export default {
   name: 'TaskModal',
   props: {
-    task: {
-      type: Object,
-      default: null
-    }
+    task: { type: Object, default: null }
+  },
+  setup(props, { emit }) {
+    const modalContentRef = ref(null)
+    
+    onClickOutside(modalContentRef, () => {
+      emit('close')
+    })
+    
+    return { modalContentRef }
   },
   data() {
     return {

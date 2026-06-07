@@ -1,7 +1,7 @@
 <template>
-  <div class="pop-new-card" @click.self="closeModal">
+  <div class="pop-new-card">
     <div class="pop-new-card__container">
-      <div class="pop-new-card__block">
+      <div class="pop-new-card__block" ref="modalContentRef">
         <div class="pop-new-card__content">
           <h3 class="pop-new-card__ttl">Создание задачи</h3>
           <a href="#" class="pop-new-card__close" @click.prevent="closeModal">&#10006;</a>
@@ -30,7 +30,6 @@
               </div>
             </form>
             
-            <!-- ТОЧНО ТАКОЙ ЖЕ КАЛЕНДАРЬ КАК В TaskModal -->
             <div class="pop-new-card__calendar">
               <p class="subttl">Даты</p>
               <div class="calendar">
@@ -55,9 +54,9 @@
                 </div>
               </div>
               <p class="calendar-deadline">
-  <span v-if="selectedDateObj">Срок исполнения: {{ formattedDate }}</span>
-  <span v-else>Выберите срок исполнения</span>
-</p>
+                <span v-if="selectedDateObj">Срок исполнения: {{ formattedDate }}</span>
+                <span v-else>Выберите срок исполнения</span>
+              </p>
             </div>
           </div>
           
@@ -76,8 +75,6 @@
             </div>
           </div>
           
-          
-          
           <button class="form-new__create _hover01" @click="createTask">Создать задачу</button>
         </div>
       </div>
@@ -86,14 +83,27 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+import { onClickOutside } from '@vueuse/core'
+
 export default {
   name: 'NewCardModal',
+  // setup ВОЗВРАЩАЕТ только ref для onClickOutside
+  setup(props, { emit }) {
+    const modalContentRef = ref(null)
+    
+    onClickOutside(modalContentRef, () => {
+      emit('close')
+    })
+    
+    return { modalContentRef }
+  },
+  // ВСЁ ОСТАЛЬНОЕ (data, computed, methods) РАБОТАЕТ КАК ОБЫЧНО
   data() {
     return {
       title: '',
       description: '',
       selectedCategory: 'Web Design',
-      
       selectedDateObj: null,
       weekDays: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
       currentMonth: new Date().getMonth(),
@@ -102,8 +112,7 @@ export default {
         { name: 'Web Design', class: '_orange' },
         { name: 'Research', class: '_green' },
         { name: 'Copywriting', class: '_purple' }
-      ],
-      statuses: ['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово']
+      ]
     }
   },
   computed: {
@@ -182,7 +191,6 @@ export default {
       this.title = ''
       this.description = ''
       this.selectedCategory = 'Web Design'
-      
       this.selectedDateObj = null
       this.currentMonth = new Date().getMonth()
       this.currentYear = new Date().getFullYear()
