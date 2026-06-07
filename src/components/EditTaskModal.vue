@@ -4,11 +4,11 @@
       <div class="pop-browse__block" ref="modalContentRef">
         <div class="pop-browse__content">
           <div class="pop-browse__top-block">
-            <h3 class="pop-browse__ttl">Редактирование задачи</h3>
-            <div class="categories__theme" :class="categoryClass">
-              <p>{{ editTopic || 'Web Design' }}</p>
-            </div>
-          </div>
+  <h3 class="pop-browse__ttl">{{ editTitle || 'Название задачи' }}</h3>
+  <div class="categories__theme" :class="categoryClass">
+    <p>{{ editTopic || 'Web Design' }}</p>
+  </div>
+</div>
 
           <!-- СТАТУСЫ (активные, для выбора) -->
           <div class="status">
@@ -68,14 +68,15 @@
 
           <!-- КНОПКИ -->
           <div class="pop-browse__btn-browse">
-            <div class="btn-group-left">
-              <button class="_btn-bg _hover01" @click="saveTask">Сохранить</button>
-              <button class="_btn-cancel _hover03" @click="closeModal">Отменить</button>
-            </div>
-            <div class="btn-group-right">
-              <button class="_btn-delete _hover03" @click="deleteTask">Удалить задачу</button>
-            </div>
-          </div>
+  <div class="btn-group-left">
+    <button class="_btn-bg _hover01" @click="saveTask">Сохранить</button>
+    <button class="_btn-cancel _hover03" @click="closeModal">Отменить</button>
+    <button class="_btn-delete _hover03" @click="deleteTask">Удалить задачу</button>
+  </div>
+  <div class="btn-group-right">
+    <button class="_btn-bg _hover01" @click="closeModal">Закрыть</button>
+  </div>
+</div>
         </div>
       </div>
     </div>
@@ -297,9 +298,9 @@ export default {
   transition: all 0.2s;
 }
 .status__theme._gray {
-  background: #565EEF;
+  background: rgba(148, 166, 190, 0.4);
   color: white;
-  border-color: #565EEF;
+  border-color: none;
 }
 .status__theme p {
   font-size: 14px;
@@ -440,14 +441,18 @@ export default {
   gap: 20px;
   margin-top: 10px;
 }
+
 .btn-group-left {
   display: flex;
   gap: 12px;
 }
+
 .btn-group-right {
   display: flex;
   gap: 12px;
 }
+
+/* Синяя кнопка (Сохранить, Закрыть) */
 ._btn-bg {
   border-radius: 4px;
   background: #565EEF;
@@ -457,34 +462,43 @@ export default {
   padding: 8px 14px;
   cursor: pointer;
 }
+
+._btn-bg:hover {
+  background-color: #33399b;
+}
+
+/* Прозрачная кнопка  (Отменить) */
 ._btn-cancel {
   border-radius: 4px;
-  border: 0.7px solid #565EEF;
+  border: 0.7px solid #FFFFFF;
   outline: none;
   background: transparent;
-  color: #565EEF;
+  color: #FFFFFF;
   padding: 8px 14px;
   cursor: pointer;
 }
+
+._btn-cancel:hover {
+  background-color: #33399b;
+  color: #FFFFFF;
+  border: none;
+}
+
+/* Кнопка "Удалить задачу" (прозрачная, красная обводка, белый текст) */
 ._btn-delete {
   border-radius: 4px;
-  border: 0.7px solid #FF4444;
+  border: 0.7px solid #FFFFFF;
   outline: none;
   background: transparent;
-  color: #FF4444;
+  color: #FFFFFF;
   padding: 8px 14px;
   cursor: pointer;
 }
-._hover01:hover {
-  background-color: #33399b;
-}
-._hover03:hover {
-  background-color: #33399b;
-  color: #FFFFFF;
-}
+
 ._btn-delete:hover {
-  background-color: #FF4444;
+  background-color: #33399b;
   color: #FFFFFF;
+  border: none;
 }
 /* АДАПТИВ */
 @media screen and (max-width: 660px) {

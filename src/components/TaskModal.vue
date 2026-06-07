@@ -60,15 +60,15 @@
             </div>
           </div>
 
-          <div class="pop-browse__btn-browse">
-            <div class="btn-group-left">
-              <button class="_btn-bor _hover03" @click="editTask">Редактировать задачу</button>
-              <button class="_btn-bor _hover03" @click="deleteTask">Удалить задачу</button>
-            </div>
-            <div class="btn-group-right">
-              <button class="_btn-bg _hover01" @click="closeModal">Закрыть</button>
-            </div>
-          </div>
+        <div class="pop-browse__btn-browse">
+  <div class="btn-group-left">
+    <button class="_btn-bor _hover03" @click="editTask">Редактировать задачу</button>
+    <button class="_btn-bor _hover03" @click="deleteTask">Удалить задачу</button>
+  </div>
+  <div class="btn-group-right">
+    <button class="_btn-bg _hover01" @click="closeModal">Закрыть</button>
+  </div>
+</div>
         </div>
       </div>
     </div>
@@ -237,7 +237,7 @@ export default {
   border-radius: 24px;
   border: 0.7px solid rgba(148, 166, 190, 0.4);
   color: white;
-  background: #565EEF;
+  background: rgba(148, 166, 190, 0.4);
   padding: 11px 14px 10px;
   white-space: nowrap;
 }
@@ -404,6 +404,7 @@ export default {
 ._hover03:hover {
   background-color: #33399b;
   color: #FFFFFF;
+  border: none;
 }
 @media screen and (max-width: 660px) {
   .pop-browse { top: 70px; }

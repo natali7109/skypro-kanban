@@ -150,6 +150,25 @@ body {
   background: var(--color-bg-light) !important;
   color: var(--color-black) !important;
 }
+/* Тёмная тема — кнопки в TaskModal */
+.dark-theme ._btn-bor {
+  border-color: #FFFFFF !important;
+  color: #FFFFFF !important;
+}
+
+.dark-theme ._btn-bor:hover {
+  background-color: #33399b !important;
+  color: #FFFFFF !important;
+}
+
+.dark-theme ._btn-bg {
+  background: #565EEF !important;
+  color: #FFFFFF !important;
+}
+
+.dark-theme ._btn-bg:hover {
+  background-color: #33399b !important;
+}
 
 /* ExitModal */
 .pop-exit__block {
@@ -160,6 +179,17 @@ body {
 
 .pop-exit__ttl h2 {
   color: var(--color-black) !important;
+}
+/* Тёмная тема — кнопка "Нет, остаться" в ExitModal */
+.dark-theme .pop-exit__exit-no {
+  border-color: #FFFFFF !important;
+  color: #FFFFFF !important;
+}
+
+.dark-theme .pop-exit__exit-no:hover {
+  background-color: #33399b !important;
+  color: #FFFFFF !important;
+  border: none;
 }
 
 /* CardView (страница карточки) */

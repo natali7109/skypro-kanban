@@ -30,9 +30,7 @@
               </label>
             </div>
             
-            <router-link to="/exit" custom v-slot="{ navigate }">
-              <button @click="navigate" class="_hover03">Выйти</button>
-            </router-link>
+            <button @click="openExitModal" class="_hover03">Выйти</button>
           </div>
         </nav>
       </div>
@@ -46,9 +44,9 @@ import { useDark, onClickOutside, useLocalStorage } from '@vueuse/core'
 
 export default {
   name: 'AppHeader',
-  emits: ['open-new-card-modal'],
+  emits: ['open-new-card-modal', 'open-exit-modal'],
   setup(props, { emit }) {
-    // --- Тема: useDark ТОЛЬКО для сохранения состояния ---
+    // --- Тема ---
     const isDarkTheme = useDark({
       selector: 'body',
       attribute: 'class', 
@@ -74,7 +72,7 @@ export default {
       }
     }, { ignore: [userButton] })
     
-    // --- Методы переключения темы (старая логика) ---
+    // --- Методы переключения темы ---
     const enableDarkTheme = () => {
       if (!document.getElementById('dark-theme-styles')) {
         const link = document.createElement('link')
@@ -102,7 +100,7 @@ export default {
       }
     }
     
-    // --- Остальные методы ---
+    // --- Методы для кнопок ---
     const toggleUserMenu = () => {
       showUserMenu.value = !showUserMenu.value
     }
@@ -111,7 +109,12 @@ export default {
       emit('open-new-card-modal')
     }
     
-    // --- Инициализация темы при загрузке ---
+    const openExitModal = () => {
+    showUserMenu.value = false
+      emit('open-exit-modal')
+    }
+    
+    // --- Инициализация темы ---
     if (isDarkTheme.value) {
       enableDarkTheme()
     }
@@ -125,7 +128,8 @@ export default {
       userButton,
       userMenu,
       toggleUserMenu,
-      openNewCardModal
+      openNewCardModal,
+      openExitModal
     }
   }
 }
@@ -135,7 +139,6 @@ export default {
 /* Стили остаются ТОЧНО ТАКИМИ ЖЕ, как у тебя были */
 .header {
   width: 100%;
-  margin: 0 auto;
   background-color: #FFFFFF;
 }
 
@@ -148,8 +151,11 @@ export default {
   position: relative;
   top: 0;
   left: 0;
-  padding: 0 10px;
-}
+  padding: 0 20px;
+  width: 100%;
+  max-width: 1260px;
+  margin: 0 auto;
+  }
 
 .header__logo img {
   width: 85px;
@@ -320,5 +326,6 @@ input:checked + .slider:before {
 ._hover03:hover {
   background-color: #33399b;
   color: #FFFFFF;
+  border: none;
 }
 </style>
