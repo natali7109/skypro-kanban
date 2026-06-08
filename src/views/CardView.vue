@@ -444,29 +444,5 @@ textarea {
 }
 
 
-@media (max-width: 600px) {
-  .two-columns {
-    flex-direction: column;
-    gap: 20px;
-  }
-  .task-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  .action-buttons {
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
-  }
-  .buttons-left {
-    justify-content: center;
-  }
-  .buttons-right {
-    justify-content: center;
-  }
-  textarea {
-    min-height: 150px;
-  }
-}
+
 </style>

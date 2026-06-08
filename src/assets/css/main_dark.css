@@ -245,3 +245,241 @@ body {
   border: 1px solid var(--color-primary) !important;
   box-shadow: 0 0 10px rgba(86, 94, 239, 0.3) !important;
 }
+
+
+/* ========== АДАПТИВ ДЛЯ ТЁМНОЙ ТЕМЫ ========= */
+/* ============================================ */
+
+/* ========== 1200px - Планшеты и маленькие ноутбуки ========== */
+@media screen and (max-width: 1200px) {
+  body.dark-theme .cards {
+    overflow-x: auto;
+  }
+  
+  body.dark-theme .cards__card {
+    background-color: var(--color-white);
+  }
+}
+
+/* ========== 660px - Планшеты вертикально и большие телефоны ========== */
+@media screen and (max-width: 660px) {
+  body.dark-theme .pop-new-card,
+  body.dark-theme .pop-browse {
+    top: 70px;
+  }
+  
+  body.dark-theme .pop-new-card__container,
+  body.dark-theme .pop-browse__container {
+    padding: 0;
+    justify-content: flex-start;
+  }
+  
+  body.dark-theme .pop-new-card__block,
+  body.dark-theme .pop-browse__block {
+    border-radius: 0;
+  }
+  
+  body.dark-theme .calendar__cells {
+    justify-content: space-around;
+  }
+  
+  body.dark-theme .calendar__cell {
+    width: 42px;
+    height: 42px;
+    font-size: 14px;
+  }
+  
+  body.dark-theme .calendar__day-name {
+    font-size: 14px;
+  }
+}
+
+/* ========== 495px - Мобильные телефоны ========== */
+@media screen and (max-width: 495px) {
+  /* Плавающая кнопка в тёмной теме */
+  body.dark-theme .header__btn-main-new {
+    position: fixed;
+    left: 16px;
+    bottom: 30px;
+    top: auto;
+    width: calc(100vw - 32px);
+    height: 40px;
+    z-index: 1001;
+    background-color: var(--color-primary);
+  }
+  
+  body.dark-theme .header__btn-main-new:hover {
+    background-color: var(--color-primary-hover);
+  }
+  
+  /* Модальные окна в тёмной теме */
+  body.dark-theme .pop-new-card__block,
+  body.dark-theme .pop-browse__block {
+    padding: 20px 16px 32px;
+  }
+  
+  body.dark-theme .pop-new-card__form,
+  body.dark-theme .pop-browse__form {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  /* Формы */
+  body.dark-theme .form-new__area,
+  body.dark-theme .form-browse__area {
+    max-width: 100%;
+    height: 120px;
+  }
+  
+  body.dark-theme .form-new__create {
+    width: 100%;
+    height: 40px;
+  }
+  
+  /* Кнопки в модальных окнах */
+  body.dark-theme .pop-browse__btn-browse {
+    flex-direction: column;
+  }
+  
+  body.dark-theme .pop-browse__btn-browse button {
+    width: 100%;
+    height: 40px;
+  }
+  
+  body.dark-theme .btn-group-left,
+  body.dark-theme .btn-group-right {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  
+  /* Кнопки в тёмной теме на мобильных */
+  body.dark-theme ._btn-bor,
+  body.dark-theme ._btn-bg {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Переключение категорий для тёмной темы */
+  body.dark-theme .pop-browse__content .theme-down {
+    display: block;
+    margin-bottom: 20px;
+  }
+  
+  body.dark-theme .pop-browse__content .theme-top {
+    display: none;
+  }
+  
+  /* Popup выхода в тёмной теме */
+  body.dark-theme .pop-exit__block {
+    padding: 30px 20px;
+  }
+  
+  body.dark-theme .pop-exit__exit-yes,
+  body.dark-theme .pop-exit__exit-no {
+    width: 100%;
+    height: 40px;
+  }
+  
+  body.dark-theme .pop-exit__exit-yes {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+  
+  body.dark-theme .pop-exit__form-group {
+    display: block;
+  }
+  
+  /* Кнопка "Нет, остаться" в тёмной теме на мобильных */
+  body.dark-theme .pop-exit__exit-no {
+    border-color: #FFFFFF;
+    color: #FFFFFF;
+  }
+}
+
+/* ========== 375px - Маленькие телефоны ========== */
+@media only screen and (max-width: 375px) {
+  body.dark-theme .container {
+    padding: 0 12px;
+  }
+  
+  body.dark-theme .pop-exit__block {
+    padding: 20px 16px;
+  }
+  
+  body.dark-theme .pop-browse__ttl,
+  body.dark-theme .pop-new-card__ttl {
+    font-size: 18px;
+  }
+  
+  /* Календарь на маленьких экранах в тёмной теме */
+  body.dark-theme .calendar__cell {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+  
+  body.dark-theme .calendar__day-name {
+    font-size: 11px;
+  }
+  
+  /* Утилитарные классы для тёмной темы на мобильных */
+  body.dark-theme ._orange,
+  body.dark-theme ._green,
+  body.dark-theme ._purple {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+}
+
+/* ========== Дополнительные фиксы для тёмной темы на мобильных ========== */
+
+/* Горизонтальный скролл карточек в тёмной теме */
+@media screen and (max-width: 1200px) {
+  body.dark-theme .cards {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding-bottom: 10px;
+  }
+  
+  body.dark-theme .cards__item {
+    flex-shrink: 0;
+  }
+  
+  body.dark-theme .cards__card {
+    background-color: var(--color-white);
+  }
+}
+
+/* Статусы в тёмной теме на мобильных */
+@media screen and (max-width: 495px) {
+  body.dark-theme .status__themes {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  body.dark-theme .status__theme {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  body.dark-theme .status__theme._gray {
+    background: rgba(148, 166, 190, 0.3);
+  }
+}
+
+/* Меню пользователя в тёмной теме на мобильных */
+@media screen and (max-width: 495px) {
+  body.dark-theme .header__pop-user-set {
+    position: fixed;
+    top: auto;
+    bottom: 80px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    background: #202229 !important;
+  }
+}
