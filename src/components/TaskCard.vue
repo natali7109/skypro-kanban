@@ -92,8 +92,9 @@ id: {
 }
 
 .cards__card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #f5f5f5;
+  transform: translate(4px, 4px);
+  box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .card__group {
