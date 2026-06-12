@@ -1,7 +1,7 @@
 <template>
-  <div class="pop-browse">
+  <div class="pop-browse" v-show="visible">
     <div class="pop-browse__container">
-      <div class="pop-browse__block" ref="modalContentRef">
+      <div class="pop-browse__block">
         <div class="pop-browse__content">
           <div class="pop-browse__top-block">
   <h3 class="pop-browse__ttl">{{ editTitle || 'Название задачи' }}</h3>
@@ -47,16 +47,20 @@
                   <div v-for="day in weekDays" :key="day" class="calendar-weekday">{{ day }}</div>
                 </div>
                 <div class="calendar-days">
-                  <div 
-                    v-for="day in calendarDays" 
-                    :key="day"
-                    class="calendar-day"
-                    :class="{ 'selected': isSelectedDate(day.date) }"
-                    @click="selectDate(day.date)"
-                  >
-                    {{ day.day }}
-                  </div>
-                </div>
+  <div 
+    v-for="day in calendarDays" 
+    :key="day"
+    class="calendar-day"
+    :class="{ 
+      'selected': isSelectedDate(day.date),
+      'today': isToday(day.date)
+    }"
+    @click="selectDate(day.date)"
+  >
+    {{ day.day }}
+  </div>
+</div>
+
               </div>
               <p class="calendar-deadline">
                 Срок исполнения: {{ formattedDate }}
@@ -81,27 +85,20 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import { onClickOutside } from '@vueuse/core'
-
 export default {
   name: 'EditTaskModal',
   props: {
-    task: {
+    visible: {
+      type: Boolean,
+      default: false
+    },
+    task: {          
       type: Object,
       default: null
     }
   },
   emits: ['close', 'save', 'delete'],
-  setup(props, { emit }) {
-    const modalContentRef = ref(null)
-    
-    onClickOutside(modalContentRef, () => {
-      emit('close')
-    })
-    
-    return { modalContentRef }
-  },
+  
   data() {
     return {
       statuses: ['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово'],
@@ -168,6 +165,11 @@ export default {
     }
   },
   methods: {
+
+  isToday(date) {
+  const today = new Date()
+  return date.toDateString() === today.toDateString()
+},
     closeModal() {
       this.$emit('close')
     },
@@ -388,15 +390,19 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  
   transition: all 0.2s;
 }
+
 .calendar-day:hover {
   background: #e0e0e0;
 }
 .calendar-day.selected {
-  background: #e0e0e0;
+  background: #b0b0b0;
   color: #333;
+}
+.calendar-day.today {
+  font-weight: 700;
+  color: #000;
 }
 .calendar-deadline {
   color: #94A6BE;

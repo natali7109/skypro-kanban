@@ -61,7 +61,6 @@ id: {
   methods: {
     
     openTaskModal() {
-    console.log('TaskCard эмитит id:', this.id)
     this.$emit('open-task-modal', this.id)  
   }
   }

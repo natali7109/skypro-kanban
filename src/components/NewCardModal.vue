@@ -1,7 +1,9 @@
 <template>
-  <div class="pop-new-card">
+  <div class="pop-new-card" v-show="visible">
     <div class="pop-new-card__container">
-      <div class="pop-new-card__block" ref="modalContentRef">
+      <div class="pop-new-card__block">
+
+
         <div class="pop-new-card__content">
           <h3 class="pop-new-card__ttl">Создание задачи</h3>
           <a href="#" class="pop-new-card__close" @click.prevent="closeModal">&#10006;</a>
@@ -42,16 +44,20 @@
                   <div v-for="day in weekDays" :key="day" class="calendar-weekday">{{ day }}</div>
                 </div>
                 <div class="calendar-days">
-                  <div 
-                    v-for="day in calendarDays" 
-                    :key="day"
-                    class="calendar-day"
-                    :class="{ 'selected': isSelectedDate(day.date) }"
-                    @click="selectDate(day.date)"
-                  >
-                    {{ day.day }}
-                  </div>
-                </div>
+  <div 
+    v-for="day in calendarDays" 
+    :key="day"
+    class="calendar-day"
+    :class="{ 
+      'selected': isSelectedDate(day.date),
+      'today': isToday(day.date)
+    }"
+    @click="selectDate(day.date)"
+  >
+    {{ day.day }}
+  </div>
+</div>
+
               </div>
               <p class="calendar-deadline">
                 <span v-if="selectedDateObj">Срок исполнения: {{ formattedDate }}</span>
@@ -83,21 +89,16 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import { onClickOutside } from '@vueuse/core'
-
 export default {
   name: 'NewCardModal',
-  // setup ВОЗВРАЩАЕТ только ref для onClickOutside
-  setup(props, { emit }) {
-    const modalContentRef = ref(null)
-    
-    onClickOutside(modalContentRef, () => {
-      emit('close')
-    })
-    
-    return { modalContentRef }
+  props: {
+    visible: {
+      type: Boolean,
+      default: false
+    }
   },
+  emits: ['close', 'create'],
+  
  
   data() {
     return {
@@ -139,7 +140,13 @@ export default {
       return `${day}.${month}.${year}`
     }
   },
+
   methods: {
+
+  isToday(date) {
+  const today = new Date()
+  return date.toDateString() === today.toDateString()
+},
     closeModal() {
       this.$emit('close')
     },

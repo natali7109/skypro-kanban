@@ -76,7 +76,6 @@ export default {
   setup() {
     const route = useRoute()
     const router = useRouter()
-    // НЕ ПРЕОБРАЗУЕМ В NUMBER — оставляем как строку
     const id = route.params.id
     
     const task = ref(null)

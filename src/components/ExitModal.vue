@@ -1,7 +1,7 @@
 <template>
-  <div class="pop-exit">
+  <div class="pop-exit" v-show="visible">
     <div class="pop-exit__container">
-      <div class="pop-exit__block" ref="modalContentRef">
+      <div class="pop-exit__block">
         <div class="pop-exit__ttl">
           <h2>Выйти из аккаунта?</h2>
         </div>
@@ -18,21 +18,17 @@
   </div>
 </template>
 
-<script>
-import { ref } from 'vue'
-import { onClickOutside } from '@vueuse/core'
 
+  <script>
 export default {
   name: 'ExitModal',
-  setup(props, { emit }) {
-    const modalContentRef = ref(null)
-    
-    onClickOutside(modalContentRef, () => {
-      emit('close')
-    })
-    
-    return { modalContentRef }
+  props: {
+    visible: {
+      type: Boolean,
+      default: false
+    }
   },
+  emits: ['close', 'confirm'],
   methods: {
     confirmExit() {
       this.$emit('confirm')
