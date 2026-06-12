@@ -76,7 +76,6 @@ export default {
   setup() {
     const route = useRoute()
     const router = useRouter()
-    // НЕ ПРЕОБРАЗУЕМ В NUMBER — оставляем как строку
     const id = route.params.id
     
     const task = ref(null)
@@ -272,7 +271,7 @@ export default {
   background: #7a8aa0;
 }
 
-/* Состояние загрузки */
+
 .loading-state {
   text-align: center;
   padding: 40px 20px;

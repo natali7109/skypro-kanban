@@ -1,5 +1,5 @@
 <template>
-  <div class="pop-browse" @click.self="closeModal">
+  <div class="pop-browse" v-show="visible">
     <div class="pop-browse__container">
       <div class="pop-browse__block">
         <div class="pop-browse__content">
@@ -10,7 +10,7 @@
             </div>
           </div>
 
-          <!-- СТАТУС — только текущий -->
+          
           <div class="status">
             <p class="status__p subttl">Статус</p>
             <div class="status__current">
@@ -20,7 +20,7 @@
             </div>
           </div>
 
-          <!-- ДВЕ КОЛОНКИ: 4 / 2 -->
+      
           <div class="pop-browse__two-columns">
             <div class="pop-browse__left">
               <label class="subttl">Описание задачи</label>
@@ -44,15 +44,20 @@
                   <div v-for="day in weekDays" :key="day" class="calendar-weekday">{{ day }}</div>
                 </div>
                 <div class="calendar-days">
-                  <div 
-                    v-for="day in calendarDays" 
-                    :key="day"
-                    class="calendar-day"
-                    :class="{ 'selected': isSelectedDate(day.date) }"
-                  >
-                    {{ day.day }}
-                  </div>
-                </div>
+  <div 
+    v-for="day in calendarDays" 
+    :key="day"
+    class="calendar-day"
+    :class="{ 
+      'selected': isSelectedDate(day.date),
+      'today': isToday(day.date)
+    }"
+    @click="selectDate(day.date)"
+  >
+    {{ day.day }}
+  </div>
+</div>
+
               </div>
               <p class="calendar-deadline">
                 Срок исполнения: {{ formattedDate }}
@@ -60,30 +65,38 @@
             </div>
           </div>
 
-          <div class="pop-browse__btn-browse">
-            <div class="btn-group-left">
-              <button class="_btn-bor _hover03" @click="editTask">Редактировать задачу</button>
-              <button class="_btn-bor _hover03" @click="deleteTask">Удалить задачу</button>
-            </div>
-            <div class="btn-group-right">
-              <button class="_btn-bg _hover01" @click="closeModal">Закрыть</button>
-            </div>
+        <div class="pop-browse__btn-browse">
+          <div class="btn-group-left">
+            <button class="_btn-bor _hover03" @click="editTask">Редактировать задачу</button>
+            <button class="_btn-bor _hover03" @click="deleteTask">Удалить задачу</button>
           </div>
+          <div class="btn-group-right">
+            <button class="_btn-bg _hover01" @click="closeModal">Закрыть</button>
+          </div>
+        </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
+
 <script>
 export default {
   name: 'TaskModal',
   props: {
+    visible: {
+      type: Boolean,
+      default: false
+    },
     task: {
       type: Object,
       default: null
     }
   },
+  emits: ['close', 'edit', 'delete'],
+  
+
   data() {
     return {
       weekDays: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
@@ -93,12 +106,13 @@ export default {
   },
   computed: {
     categoryClass() {
+      if (!this.task) return '_orange'
       const colors = {
         'Web Design': '_orange',
         'Research': '_green', 
         'Copywriting': '_purple'
       }
-      return colors[this.task?.topic] || '_orange'
+      return colors[this.task.topic] || '_orange'
     },
     currentMonthName() {
       const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
@@ -116,7 +130,7 @@ export default {
       return days
     },
     formattedDate() {
-      if (!this.task?.date) return 'не указана'
+      if (!this.task || !this.task.date) return 'не указана'
       let dateStr = this.task.date
       if (dateStr.includes('-')) {
         const parts = dateStr.split('-')
@@ -125,14 +139,28 @@ export default {
       return dateStr
     }
   },
+
   methods: {
+
+  isToday(date) {
+  const today = new Date()
+  return date.toDateString() === today.toDateString()
+},
     closeModal() {
       this.$emit('close')
     },
     editTask() {
+      if (!this.task) {
+        console.error('Task is null in editTask')
+        return
+      }
       this.$emit('edit', this.task)
     },
     deleteTask() {
+      if (!this.task) {
+        console.error('Task is null in deleteTask')
+        return
+      }
       this.$emit('delete', this.task)
     },
     changeMonth(delta) {
@@ -149,7 +177,7 @@ export default {
       this.currentYear = newYear
     },
     isSelectedDate(date) {
-      if (!this.task?.date) return false
+      if (!this.task || !this.task.date) return false
       let taskDateStr = this.task.date
       if (taskDateStr.includes('.')) {
         const parts = taskDateStr.split('.')
@@ -228,7 +256,7 @@ export default {
   border-radius: 24px;
   border: 0.7px solid rgba(148, 166, 190, 0.4);
   color: white;
-  background: #565EEF;
+  background: rgba(148, 166, 190, 0.4);
   padding: 11px 14px 10px;
   white-space: nowrap;
 }
@@ -237,7 +265,7 @@ export default {
   line-height: 1;
   letter-spacing: -0.14px;
 }
-/* ДВЕ КОЛОНКИ: 4 / 2 */
+
 .pop-browse__two-columns {
   display: flex;
   gap: 24px;
@@ -395,6 +423,7 @@ export default {
 ._hover03:hover {
   background-color: #33399b;
   color: #FFFFFF;
+  border: none;
 }
 @media screen and (max-width: 660px) {
   .pop-browse { top: 70px; }

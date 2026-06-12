@@ -1,5 +1,5 @@
 <template>
-  <div class="pop-exit" @click.self="cancelExit">
+  <div class="pop-exit" v-show="visible">
     <div class="pop-exit__container">
       <div class="pop-exit__block">
         <div class="pop-exit__ttl">
@@ -18,9 +18,17 @@
   </div>
 </template>
 
-<script>
+
+  <script>
 export default {
   name: 'ExitModal',
+  props: {
+    visible: {
+      type: Boolean,
+      default: false
+    }
+  },
+  emits: ['close', 'confirm'],
   methods: {
     confirmExit() {
       this.$emit('confirm')
@@ -42,7 +50,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 5;
+  z-index: 100;
 }
 
 .pop-exit__container {

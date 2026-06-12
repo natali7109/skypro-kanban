@@ -1,7 +1,9 @@
 <template>
-  <div class="pop-new-card" @click.self="closeModal">
+  <div class="pop-new-card" v-show="visible">
     <div class="pop-new-card__container">
       <div class="pop-new-card__block">
+
+
         <div class="pop-new-card__content">
           <h3 class="pop-new-card__ttl">Создание задачи</h3>
           <a href="#" class="pop-new-card__close" @click.prevent="closeModal">&#10006;</a>
@@ -30,7 +32,6 @@
               </div>
             </form>
             
-            <!-- ТОЧНО ТАКОЙ ЖЕ КАЛЕНДАРЬ КАК В TaskModal -->
             <div class="pop-new-card__calendar">
               <p class="subttl">Даты</p>
               <div class="calendar">
@@ -43,21 +44,25 @@
                   <div v-for="day in weekDays" :key="day" class="calendar-weekday">{{ day }}</div>
                 </div>
                 <div class="calendar-days">
-                  <div 
-                    v-for="day in calendarDays" 
-                    :key="day"
-                    class="calendar-day"
-                    :class="{ 'selected': isSelectedDate(day.date) }"
-                    @click="selectDate(day.date)"
-                  >
-                    {{ day.day }}
-                  </div>
-                </div>
+  <div 
+    v-for="day in calendarDays" 
+    :key="day"
+    class="calendar-day"
+    :class="{ 
+      'selected': isSelectedDate(day.date),
+      'today': isToday(day.date)
+    }"
+    @click="selectDate(day.date)"
+  >
+    {{ day.day }}
+  </div>
+</div>
+
               </div>
               <p class="calendar-deadline">
-  <span v-if="selectedDateObj">Срок исполнения: {{ formattedDate }}</span>
-  <span v-else>Выберите срок исполнения</span>
-</p>
+                <span v-if="selectedDateObj">Срок исполнения: {{ formattedDate }}</span>
+                <span v-else>Выберите срок исполнения</span>
+              </p>
             </div>
           </div>
           
@@ -76,8 +81,6 @@
             </div>
           </div>
           
-          
-          
           <button class="form-new__create _hover01" @click="createTask">Создать задачу</button>
         </div>
       </div>
@@ -88,12 +91,20 @@
 <script>
 export default {
   name: 'NewCardModal',
+  props: {
+    visible: {
+      type: Boolean,
+      default: false
+    }
+  },
+  emits: ['close', 'create'],
+  
+ 
   data() {
     return {
       title: '',
       description: '',
       selectedCategory: 'Web Design',
-      
       selectedDateObj: null,
       weekDays: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
       currentMonth: new Date().getMonth(),
@@ -102,8 +113,7 @@ export default {
         { name: 'Web Design', class: '_orange' },
         { name: 'Research', class: '_green' },
         { name: 'Copywriting', class: '_purple' }
-      ],
-      statuses: ['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово']
+      ]
     }
   },
   computed: {
@@ -130,7 +140,13 @@ export default {
       return `${day}.${month}.${year}`
     }
   },
+
   methods: {
+
+  isToday(date) {
+  const today = new Date()
+  return date.toDateString() === today.toDateString()
+},
     closeModal() {
       this.$emit('close')
     },
@@ -182,7 +198,6 @@ export default {
       this.title = ''
       this.description = ''
       this.selectedCategory = 'Web Design'
-      
       this.selectedDateObj = null
       this.currentMonth = new Date().getMonth()
       this.currentYear = new Date().getFullYear()
@@ -192,7 +207,6 @@ export default {
 </script>
 
 <style scoped>
-/* ========== ВСЕ СТИЛИ КРОМЕ КАЛЕНДАРЯ ОСТАЮТСЯ ТЕ ЖЕ ========== */
 
 .pop-new-card {
   width: 100%;
@@ -303,7 +317,6 @@ export default {
   resize: vertical;
 }
 
-/* ===== ТОЧНО ТАКИЕ ЖЕ СТИЛИ КАЛЕНДАРЯ КАК В TaskModal ===== */
 
 .pop-new-card__calendar {
   flex: 2;
@@ -394,7 +407,7 @@ export default {
   margin-bottom: 12px;
 }
 
-/* Категории и статус */
+
 .categories {
   margin-bottom: 20px;
 }
@@ -464,7 +477,7 @@ export default {
   background-color: #33399b;
 }
 
-/* Адаптив */
+
 @media screen and (max-width: 660px) {
   .pop-new-card {
     top: 70px;

@@ -3,36 +3,40 @@
     <div class="login-container">
       <h2>Вход</h2>
       
-      <!-- Блок с ошибкой -->
-      <div v-if="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
-      
       <form @submit.prevent="handleLogin">
-        <div class="form-group">
+        <div class="form-group" :class="{ 'has-error': errors.login }">
           <label>Email</label>
           <input 
             type="email" 
             v-model="login" 
             placeholder="ivan@example.com" 
-            required 
             :disabled="loading"
+            @input="clearFieldError('login')"
           />
+          <div v-if="errors.login" class="field-error">{{ errors.login }}</div>
         </div>
-        <div class="form-group">
+        
+        <div class="form-group" :class="{ 'has-error': errors.password }">
           <label>Пароль</label>
           <input 
             type="password" 
             v-model="password" 
             placeholder="••••••••" 
-            required 
             :disabled="loading"
+            @input="clearFieldError('password')"
           />
+          <div v-if="errors.password" class="field-error">{{ errors.password }}</div>
         </div>
-        <button type="submit" :disabled="loading">
+        
+        <div v-if="generalError" class="error-message">
+          {{ generalError }}
+        </div>
+        
+        <button type="submit" :disabled="isButtonDisabled" :class="{ 'btn-disabled': isButtonDisabled }">
           {{ loading ? 'Вход...' : 'Войти' }}
         </button>
       </form>
+      
       <p class="register-link">
         Нужно зарегистрироваться? <router-link to="/register">Регистрируйтесь здесь</router-link>
       </p>
@@ -41,7 +45,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { signIn } from '../services/auth.js'
 
@@ -51,45 +55,83 @@ export default {
     const login = ref('')
     const password = ref('')
     const loading = ref(false)
-    const errorMessage = ref('')
+    const generalError = ref('')
+    const errors = ref({
+      login: '',
+      password: ''
+    })
     const router = useRouter()
 
-    const handleLogin = async () => {
-      // Очищаем предыдущую ошибку
-      errorMessage.value = ''
+    
+    const isButtonDisabled = computed(() => {
+      return loading.value || !!errors.value.login || !!errors.value.password || !login.value || !password.value
+    })
+
+    const validateForm = () => {
+      let isValid = true
+      errors.value = { login: '', password: '' }
       
-      // Валидация
-      if (!login.value || !password.value) {
-        errorMessage.value = 'Заполните все поля'
+      if (!login.value) {
+        errors.value.login = 'Поле обязательно для заполнения'
+        isValid = false
+      } else if (!/^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/.test(login.value)) {
+        errors.value.login = 'Введите корректный email'
+        isValid = false
+      }
+      
+      if (!password.value) {
+        errors.value.password = 'Поле обязательно для заполнения'
+        isValid = false
+      }
+      
+      return isValid
+    }
+
+    const clearFieldError = (field) => {
+      errors.value[field] = ''
+      generalError.value = ''
+    }
+
+    const handleLogin = async () => {
+      generalError.value = ''
+      
+      if (!validateForm()) {
         return
       }
       
       loading.value = true
       
       try {
-        // Отправляем запрос на сервер
         const user = await signIn({
           login: login.value,
           password: password.value
         })
         
-        // Сохраняем токен и данные пользователя
         localStorage.setItem('token', user.token)
         localStorage.setItem('userName', user.name)
         localStorage.setItem('userLogin', user.login)
         
-        // Редирект на главную
         router.push('/')
         
       } catch (error) {
-        // Показываем ошибку пользователю
-        errorMessage.value = error.message || 'Ошибка при входе'
+        errors.value.login = ' '
+        errors.value.password = ' '
+        generalError.value = 'Введенные вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.'
       } finally {
         loading.value = false
       }
     }
 
-    return { login, password, handleLogin, loading, errorMessage }
+    return { 
+      login, 
+      password, 
+      handleLogin, 
+      loading, 
+      generalError,
+      errors,
+      isButtonDisabled,
+      clearFieldError
+    }
   }
 }
 </script>
@@ -122,6 +164,7 @@ export default {
   font-weight: 600;
 }
 
+
 .error-message {
   background: #ffebee;
   color: #c62828;
@@ -130,6 +173,18 @@ export default {
   margin-bottom: 20px;
   text-align: center;
   font-size: 14px;
+}
+
+
+.field-error {
+  color: #c62828;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.form-group.has-error input {
+  border-color: #c62828 !important;
+  background-color: #fff5f5 !important;
 }
 
 .form-group {
@@ -151,6 +206,7 @@ export default {
   font-size: 16px;
   background: #FFFFFF;
   color: #333333;
+  transition: border-color 0.3s, background-color 0.3s;
 }
 
 .form-group input::placeholder {
@@ -161,6 +217,11 @@ export default {
   outline: none;
   border-color: #565EEF;
 }
+
+.form-group.has-error input:focus {
+  border-color: #c62828 !important;
+}
+
 
 button {
   width: 100%;
@@ -179,9 +240,11 @@ button:hover:not(:disabled) {
   background: #33399b;
 }
 
-button:disabled {
-  opacity: 0.6;
+button:disabled,
+.btn-disabled {
+  background: #cccccc !important;
   cursor: not-allowed;
+  opacity: 1;
 }
 
 .register-link {

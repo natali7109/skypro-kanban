@@ -20,12 +20,12 @@ export default {
     const router = useRouter()
 
     const confirmLogout = () => {
-      // Очищаем все данные пользователя
+     
       localStorage.removeItem('token')
       localStorage.removeItem('userName')
       localStorage.removeItem('userLogin')
       
-      // Редирект на страницу входа
+     
       router.push('/login')
     }
 

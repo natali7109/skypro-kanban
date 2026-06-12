@@ -14,11 +14,11 @@
             Создать новую задачу
           </button>
 
-          <button class="header__user _hover02" @click="toggleUserMenu">
+          <button class="header__user _hover02" @click="toggleUserMenu" ref="userButton">
             {{ userName }}
           </button>
 
-          <div class="header__pop-user-set pop-user-set" v-show="showUserMenu">
+          <div class="header__pop-user-set pop-user-set" v-show="showUserMenu" ref="userMenu">
             <p class="pop-user-set__name">{{ userName }}</p>
             <p class="pop-user-set__mail">{{ userEmail }}</p>
 
@@ -30,9 +30,7 @@
               </label>
             </div>
             
-            <router-link to="/exit" custom v-slot="{ navigate }">
-              <button @click="navigate" class="_hover03">Выйти</button>
-            </router-link>
+            <button @click="openExitModal" class="_hover03">Выйти</button>
           </div>
         </nav>
       </div>
@@ -41,49 +39,41 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+import { useDark, onClickOutside, useLocalStorage } from '@vueuse/core'
+
 export default {
   name: 'AppHeader',
-
-  data() {
-    return {
-      showUserMenu: false,
-      isDarkTheme: false,
-      userName: localStorage.getItem('userName') || localStorage.getItem('user') || 'Пользователь',
-      userEmail: localStorage.getItem('userLogin') || localStorage.getItem('email') || 'user@example.com'
-    }
-  },
-
-  mounted() {
-    this.loadThemePreference()
-    this.updateUserData()
-    this.handleOutsideClick = this.handleOutsideClick.bind(this)
-    document.addEventListener('click', this.handleOutsideClick)
-  },
-
-  beforeUnmount() {
-    document.removeEventListener('click', this.handleOutsideClick)
-  },
-
-  methods: {
-    openNewCardModal() {
-      this.$emit('open-new-card-modal')
-    },
-
-    toggleUserMenu() {
-      this.updateUserData()
-      this.showUserMenu = !this.showUserMenu
-    },
-
-    toggleTheme() {
-      if (this.isDarkTheme) {
-        this.enableDarkTheme()
-      } else {
-        this.disableDarkTheme()
+  emits: ['open-new-card-modal', 'open-exit-modal'],
+  setup(props, { emit }) {
+    // --- Тема ---
+    const isDarkTheme = useDark({
+      selector: 'body',
+      attribute: 'class', 
+      valueDark: 'dark-theme',
+      valueLight: '',
+      storageKey: 'darkTheme',
+      initialValue: 'light'
+    })
+    
+    // --- Данные пользователя ---
+    const userName = useLocalStorage('userName', 'Пользователь')
+    const userEmail = useLocalStorage('userLogin', 'user@example.com')
+    const showUserMenu = ref(false)
+    
+    // --- Ref для элементов меню ---
+    const userButton = ref(null)
+    const userMenu = ref(null)
+    
+    // --- Закрытие меню при клике вне ---
+    onClickOutside(userMenu, () => {
+      if (showUserMenu.value) {
+        showUserMenu.value = false
       }
-      localStorage.setItem('darkTheme', this.isDarkTheme)
-    },
-
-    enableDarkTheme() {
+    }, { ignore: [userButton] })
+    
+    // --- Методы переключения темы ---
+    const enableDarkTheme = () => {
       if (!document.getElementById('dark-theme-styles')) {
         const link = document.createElement('link')
         link.id = 'dark-theme-styles'
@@ -92,37 +82,54 @@ export default {
         document.head.appendChild(link)
       }
       document.body.classList.add('dark-theme')
-    },
+    }
 
-    disableDarkTheme() {
+    const disableDarkTheme = () => {
       const link = document.getElementById('dark-theme-styles')
       if (link) {
         link.remove()
       }
       document.body.classList.remove('dark-theme')
-    },
+    }
 
-    loadThemePreference() {
-      const savedTheme = localStorage.getItem('darkTheme')
-      if (savedTheme === 'true') {
-        this.isDarkTheme = true
-        this.enableDarkTheme()
+    const toggleTheme = () => {
+      if (isDarkTheme.value) {
+        enableDarkTheme()
+      } else {
+        disableDarkTheme()
       }
-    },
-
-    updateUserData() {
-      this.userName = localStorage.getItem('userName') || localStorage.getItem('user') || 'Пользователь'
-      this.userEmail = localStorage.getItem('userLogin') || localStorage.getItem('email') || 'user@example.com'
-    },
-
-    handleOutsideClick(e) {
-      const userElement = this.$el?.querySelector('.header__user')
-      const popupElement = this.$el?.querySelector('.header__pop-user-set')
-      if (userElement && popupElement && 
-          !userElement.contains(e.target) && 
-          !popupElement.contains(e.target)) {
-        this.showUserMenu = false
-      }
+    }
+    
+    // --- Методы для кнопок ---
+    const toggleUserMenu = () => {
+      showUserMenu.value = !showUserMenu.value
+    }
+    
+    const openNewCardModal = () => {
+      emit('open-new-card-modal')
+    }
+    
+    const openExitModal = () => {
+    showUserMenu.value = false
+      emit('open-exit-modal')
+    }
+    
+    // --- Инициализация темы ---
+    if (isDarkTheme.value) {
+      enableDarkTheme()
+    }
+    
+    return {
+      isDarkTheme,
+      toggleTheme,
+      userName,
+      userEmail,
+      showUserMenu,
+      userButton,
+      userMenu,
+      toggleUserMenu,
+      openNewCardModal,
+      openExitModal
     }
   }
 }
@@ -131,7 +138,6 @@ export default {
 <style scoped>
 .header {
   width: 100%;
-  margin: 0 auto;
   background-color: #FFFFFF;
 }
 
@@ -144,11 +150,11 @@ export default {
   position: relative;
   top: 0;
   left: 0;
-  padding: 0 10px;
+  padding: 0 20px;
+  width: 100%;
   max-width: 1260px;
   margin: 0 auto;
-  padding: 0 20px;
-}
+  }
 
 .header__logo img {
   width: 85px;
@@ -164,10 +170,8 @@ export default {
 }
 
 .header__btn-main-new {
-  min-width: 120px;   
-  max-width: 100%;    
+  width: 178px;
   height: 30px;
-  padding: 0 16px;    
   border-radius: 4px;
   background-color: #565EEF;
   color: #FFFFFF;
@@ -178,10 +182,7 @@ export default {
   text-align: center;
   cursor: pointer;
   text-decoration: none;
-  display: inline-flex;   
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;    
+  display: inline-block;
 }
 
 .header__user {
@@ -324,5 +325,6 @@ input:checked + .slider:before {
 ._hover03:hover {
   background-color: #33399b;
   color: #FFFFFF;
+  border: none;
 }
 </style>

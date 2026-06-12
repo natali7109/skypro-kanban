@@ -1,11 +1,36 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import HomeView from './views/HomeView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: () => import('./views/HomeView.vue'),
+    component: HomeView,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/new-card',
+    name: 'new-card-modal',
+    component: HomeView,  // Та же HomeView, но с открытой модалкой
+    meta: { requiresAuth: true, modal: 'new-card' }
+  },
+  {
+    path: '/card/:id',
+    name: 'task-modal',
+    component: HomeView,
+    meta: { requiresAuth: true, modal: 'task' }
+  },
+  {
+    path: '/edit/:id',
+    name: 'edit-modal',
+    component: HomeView,
+    meta: { requiresAuth: true, modal: 'edit' }
+  },
+  {
+    path: '/exit',
+    name: 'exit-modal',
+    component: HomeView,
+    meta: { requiresAuth: true, modal: 'exit' }
   },
   {
     path: '/login',
@@ -16,26 +41,6 @@ const routes = [
     path: '/register',
     name: 'register',
     component: () => import('./views/RegisterView.vue')
-  },
-  {
-    path: '/card/:id',
-    name: 'card-view',
-    component: () => import('./views/CardView.vue'),
-    meta: { requiresAuth: true },
-    props: true
-  },
-  {
-    path: '/edit/:id',
-    name: 'edit-task',
-    component: () => import('./views/EditView.vue'),
-    meta: { requiresAuth: true },
-    props: true
-  },
-  {
-    path: '/exit',
-    name: 'exit',
-    component: () => import('./views/LogoutView.vue'),
-    meta: { requiresAuth: true }
   },
   {
     path: '/:catchAll(.*)*',
@@ -49,10 +54,9 @@ const router = createRouter({
   routes
 })
 
-// Защита маршрутов — проверяем наличие токена
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  const isAuth = !!token // true если токен есть
+  const isAuth = !!token  
 
   if (to.meta.requiresAuth && !isAuth) {
     next('/login')

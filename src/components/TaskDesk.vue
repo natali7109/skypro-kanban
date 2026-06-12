@@ -63,7 +63,7 @@ onMounted(() => {
   justify-content: center;  
 }
 
-/* ========== СКЕЛЕТОН ========== */
+
 .skeleton-wrapper {
   width: 100%;
   overflow-x: auto;
@@ -138,7 +138,7 @@ onMounted(() => {
   }
 }
 
-/* ========== АДАПТИВ ========== */
+
 @media screen and (max-width: 1200px) {
   .container {
     padding: 0 16px;

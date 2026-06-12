@@ -22,7 +22,7 @@ export default {
 </script>
 
 <style scoped>
-/* ========== БАЗОВЫЕ СТИЛИ (СВЕТЛАЯ ТЕМА) ========== */
+
 .main__column {
   min-width: 0;  
   word-break: break-word;  
@@ -48,7 +48,7 @@ export default {
   position: relative;
 }
 
-/* ========== АДАПТИВНЫЕ СТИЛИ ========== */
+
 
 @media screen and (max-width: 1200px) {
   .main__column {
